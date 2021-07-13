@@ -7,9 +7,9 @@ def leArquivo(arquivo="standard_input.txt"):
 
     n = int(n)
     m = int(m)
-    restricoes = np.zeros((n,m), dtype="int32")
-    b = np.zeros(n, dtype="int32")
-    c = np.array(file.readline().split(), dtype="int32")
+    restricoes = np.zeros((n,m), dtype="float32")
+    b = np.zeros(n, dtype="float32")
+    c = np.array(file.readline().split(), dtype="float32")
 
     for i in range(n):
         linha = np.array(list(file.readline().split()))
@@ -20,11 +20,11 @@ def leArquivo(arquivo="standard_input.txt"):
     return n,m,c,b,restricoes
 
 def main():
-    arquivo = "standard_input.txt"
+    arquivo = "standard_input2.txt"
     
     try:
         n,m,c,b,restricoes=leArquivo(arquivo)
-        my_simplex = Simplex(n,m,c,b,restricoes)
+        my_simplex = Simplex(c,b,restricoes)
         my_simplex.resolver()
     except OSError:
         print("Não foi possível abrir arquivo no endereço {}".format(arquivo))
