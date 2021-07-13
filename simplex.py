@@ -29,8 +29,9 @@ class Simplex():
 
     def __verificaViabilidade(self):
         plAux = self.__geraPLAuxiliar()
-        my_tableux = Tableux()
+        my_tableux = Tableux(self.c,self.b,self.restricoes)
         my_tableux.resolver()
+        my_tableux.imprimirTudo()
         if(my_tableux.getValorOtimo() < 0):
             return False
         elif(my_tableux.getValorOtimo() > 0):
