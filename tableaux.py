@@ -1,14 +1,16 @@
 import numpy as np
+from maxPL import PL
 
-class Tableux():
-    def __init__(self,c,b,restricoes):
+class Tableaux():
+    def __init__(self,pl):
         self.__valorOtimo = 0
-        self.__certificadoOtimo = np.array(range(restricoes.shape[0]))
-        self.__solucaoViavel = np.array(range(restricoes.shape[0]))
+        self.__certificadoOtimo = np.array(range(pl.numRestricoes()))
+        self.__solucaoViavel = np.array(range(pl.numVariaveis()))
         self.__isViavel = True
         self.__isIlimitada = True
-        self.__certificadoIlimitada = np.array(range(restricoes.shape[0]))
-        self.__matrizTransformacoes = np.identity(restricoes.shape[0])
+        self.__certificadoIlimitada = np.array(range(pl.numRestricoes()))
+        self.__matrizTransformacoes = np.identity(pl.numRestricoes())
+        self.__pl = pl
 
     def imprimirTudo(self):
         print("Meu Tableaux")
@@ -18,7 +20,9 @@ class Tableux():
         print("É Viável: {}".format(self.__isViavel))
         print("É Ilimitada: {}".format(self.__isIlimitada))
         print("Certificado Ilimitada: {}".format(self.__certificadoIlimitada))
-        print("Matriz Transformações: {}".format(self.__matrizTransformacoes))
+        print("Matriz Transformações:\n {}".format(self.__matrizTransformacoes))
+        print("PL:")
+        self.__pl.print()
 
     def resolver(self):
         pass
