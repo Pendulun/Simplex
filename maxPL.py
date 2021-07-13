@@ -9,7 +9,10 @@ class PL():
     def numRestricoes(self):
         return self.restricoes.shape[0]
     
+    def numVariaveis(self):
+        return self.restricoes.shape[1]
+    
     def print(self):
-        print("C: {}",format(self.c))
+        print("C: {}".format(self.c))
         print("B: {}".format(self.b))
         print("Restrições:\n {}".format(self.restricoes))
