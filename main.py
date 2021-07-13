@@ -6,23 +6,27 @@ def leArquivo(arquivo="standard_input.txt"):
 
     n = int(n)
     m = int(m)
-    linhas = []
+    restricoes = []
+    b = []
     c = file.readline().split()
 
     for i in range(n):
-        linhas.append(list(file.readline().split()))
+        linha = list(file.readline().split())
+        restricoes.append(linha[:-1])
+        b.append(linha[-1])
         
     file.close()
-    return n,m,c,linhas
+    return n,m,c,b,restricoes
 
 def main():
     arquivo = "standard_input.txt"
     try:
-        n,m,c,linhas=leArquivo(arquivo)
-        print(n)
-        print(m)
-        print(c)
-        print(linhas)
+        n,m,c,b,restricoes=leArquivo(arquivo)
+        print("Número de restrições: {}".format(n))
+        print("Número de variáveis: {}".format(m))
+        print("Vetor C: {}".format(c))
+        print("Vetor B: {}".format(b))
+        print("Restrições: {}".format(restricoes))
     except:
         print("Não foi possível abrir arquivo no endereço {}".format(arquivo))
     
