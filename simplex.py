@@ -1,4 +1,5 @@
 import numpy as np
+from tableaux import Tableux
 
 class Simplex():
     """
@@ -27,8 +28,18 @@ class Simplex():
         
 
     def __verificaViabilidade(self):
-        return True
+        plAux = self.__geraPLAuxiliar()
+        my_tableux = Tableux()
+        my_tableux.resolver()
+        if(my_tableux.getValorOtimo() < 0):
+            return False
+        elif(my_tableux.getValorOtimo() > 0):
+            print("Algo deu errado! Valor ótimo da PL Auxiliar é maior que 0!")
+        else:
+            return True
 
+    def __geraPLAuxiliar(self):
+        pass
 
     def imprimeTudo(self):
         print("Número de restrições: {}".format(self.n))
