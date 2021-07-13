@@ -17,6 +17,9 @@ class Simplex():
 
     def resolver(self):
         self.imprimeTudo()
+        self.__trocaSinalLinhaSeBNaoPositivo()
+        self.imprimeTudo()
+
 
     def imprimeTudo(self):
         print("Número de restrições: {}".format(self.n))
@@ -25,9 +28,9 @@ class Simplex():
         print("Vetor B: {}".format(self.b))
         print("Restrições: {}".format(self.restricoes))
 
-    def trocaSinalRestricaoSeBNaoPositivo(self,b,restricoes):
+    def __trocaSinalLinhaSeBNaoPositivo(self):
         print("TROCA SINAL")
-        for i in range(b.size):
-            if b[i]<0:
-                restricoes[i] = restricoes[i] * -1
-                b[i] = b[i] * -1
+        for i in range(self.b.size):
+            if self.b[i]<0:
+                self.restricoes[i] = self.restricoes[i] * -1
+                self.b[i] = self.b[i] * -1
