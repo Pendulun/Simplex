@@ -1,5 +1,6 @@
 import numpy as np
-from tableaux import Tableux
+from maxPL import PL
+from tableaux import Tableaux
 
 class Simplex():
     """
@@ -8,46 +9,53 @@ class Simplex():
     sujeito a AX <= b e X>=0
     aplicando  o algoritmo Simplex
     """
-    def __init__(self,n,m,c,b,restricoes):
-        self.n = n
-        self.m = m
-        self.c = c
-        self.b = b
-        self.restricoes = restricoes
-        pass
+    def __init__(self,c,b,restricoes):
+        self.pl = PL(c,b,restricoes)
 
     def resolver(self):
+        print("PL RECEBIDA")
         self.imprimeTudo()
         if(self.__verificaViabilidade()):
-            self.__completarVariaveisFolga()
-            self.imprimeTudo()
-            self.__trocaSinalLinhaSeBNaoPositivo()
-            self.imprimeTudo()
+            pass
         else:
             pass
         
 
     def __verificaViabilidade(self):
         plAux = self.__geraPLAuxiliar()
-        my_tableux = Tableux(self.c,self.b,self.restricoes)
-        my_tableux.resolver()
-        my_tableux.imprimirTudo()
-        if(my_tableux.getValorOtimo() < 0):
+        print("PL AUX:")
+        plAux.print()
+        my_tableaux = Tableaux(plAux)
+        my_tableaux.resolver()
+        my_tableaux.imprimirTudo()
+        if(my_tableaux.getValorOtimo() < 0):
             return False
-        elif(my_tableux.getValorOtimo() > 0):
+        elif(my_tableaux.getValorOtimo() > 0):
             print("Algo deu errado! Valor ótimo da PL Auxiliar é maior que 0!")
         else:
             return True
 
     def __geraPLAuxiliar(self):
-        pass
+        print("Gerando PL Auxiliar")
+        #Criar nova PL Auxiliar com base na original
+        cAux = np.zeros(self.pl.c.shape[0])
+        bAux = self.pl.b.copy()
+        restricoesAux = self.pl.restricoes.copy()
+
+        #Adicionar matriz de variáveis de folga nas restrições
+        print(restricoesAux.shape[0])
+        variaveisAux = self.__geraMatrizIdentidade(restricoesAux.shape[0])
+        restricoesAux = np.hstack((restricoesAux,variaveisAux))
+
+        #zerar o vetor C e adicionar 1's
+        vetorUns = np.ones(restricoesAux.shape[0])
+        cAux = np.concatenate((cAux,vetorUns), axis=None)
+
+        #retorna PL Auxiliar
+        return PL(cAux, bAux, restricoesAux)
 
     def imprimeTudo(self):
-        print("Número de restrições: {}".format(self.n))
-        print("Número de variáveis: {}".format(self.m))
-        print("Vetor C: {}".format(self.c))
-        print("Vetor B: {}".format(self.b))
-        print("Restrições: {}".format(self.restricoes))
+        self.pl.print()
 
     def __trocaSinalLinhaSeBNaoPositivo(self):
         print("TROCA SINAL")
@@ -56,8 +64,6 @@ class Simplex():
                 self.restricoes[i] = self.restricoes[i] * -1
                 self.b[i] = self.b[i] * -1
     
-    def __completarVariaveisFolga(self):
-        print("Completar variáveis de Folga")
-        identidade = np.identity(self.n)
-        print("identidade: {}".format(identidade))
-        self.restricoes = np.hstack((self.restricoes,identidade))
+    def __geraMatrizIdentidade(self, tam):
+        print("Gera Matriz Identidade")
+        return np.identity(tam)
