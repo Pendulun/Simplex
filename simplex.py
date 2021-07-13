@@ -32,6 +32,7 @@ class Simplex():
             return False
         elif(my_tableaux.getValorOtimo() > 0):
             print("Algo deu errado! Valor ótimo da PL Auxiliar é maior que 0!")
+            return False
         else:
             return True
 
