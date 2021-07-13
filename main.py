@@ -20,7 +20,7 @@ def leArquivo(arquivo="standard_input.txt"):
     return n,m,c,b,restricoes
 
 def main():
-    arquivo = "standard_input2.txt"
+    arquivo = "testes/standard_input2.txt"
     
     try:
         n,m,c,b,restricoes=leArquivo(arquivo)
