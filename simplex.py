@@ -17,8 +17,17 @@ class Simplex():
 
     def resolver(self):
         self.imprimeTudo()
-        self.__trocaSinalLinhaSeBNaoPositivo()
-        self.imprimeTudo()
+        if(self.__verificaViabilidade()):
+            self.__completarVariaveisFolga()
+            self.imprimeTudo()
+            self.__trocaSinalLinhaSeBNaoPositivo()
+            self.imprimeTudo()
+        else:
+            pass
+        
+
+    def __verificaViabilidade(self):
+        return True
 
 
     def imprimeTudo(self):
@@ -34,3 +43,9 @@ class Simplex():
             if self.b[i]<0:
                 self.restricoes[i] = self.restricoes[i] * -1
                 self.b[i] = self.b[i] * -1
+    
+    def __completarVariaveisFolga(self):
+        print("Completar variáveis de Folga")
+        identidade = np.identity(self.n)
+        print("identidade: {}".format(identidade))
+        self.restricoes = np.hstack((self.restricoes,identidade))
