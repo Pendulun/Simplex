@@ -8,6 +8,7 @@ class Tableaux():
         self.__solucaoViavel = np.array(range(pl.numVariaveis()))
         self.__isViavel = True
         self.__isIlimitada = True
+        self.__isOtimo = True
         self.__certificadoIlimitada = np.array(range(pl.numRestricoes()))
         self.__matrizTransformacoes = np.identity(pl.numRestricoes())
         self.__pl = pl
@@ -41,4 +42,21 @@ class Tableaux():
     def getValorOtimo(self):
         if(self.__isViavel):
             return self.__valorOtimo
+    
+    def isViavel(self):
+        return self.__isViavel
+    
+    def isIlimitada(self):
+        return self.__isIlimitada
+    
+    def isOtima(self):
+        return self.__isOtimo
+
+    def getCertificadoIlimitada(self):
+        if self.__isIlimitada:
+            return self.__certificadoIlimitada.copy()
+    
+    def getCertificadoOtima(self):
+        if self.__isOtimo:
+            return self.__certificadoOtimo.copy()
     

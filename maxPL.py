@@ -1,6 +1,7 @@
 import numpy as np
 
 class PL():
+
     def __init__(self,c,b,restricoes):
         self.c = c
         self.b = b
