@@ -5,7 +5,7 @@ class Tableaux():
     def __init__(self,pl):
         self.__valorOtimo = 0
         self.__certificadoOtimo = np.array(range(pl.numRestricoes()))
-        self.__solucaoViavel = np.array(range(pl.numVariaveis()))
+        self.__solucaoViavel = np.array(range(pl.numVariaveisRestricoes()))
         self.__isViavel = True
         self.__isIlimitada = True
         self.__isOtimo = True
