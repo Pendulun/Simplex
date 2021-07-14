@@ -27,7 +27,28 @@ class Tableaux():
         self.__pl.print()
 
     def resolver(self):
+        #trata qualquer b[i] negativo
+        self.__trataBiNegativo()
+        #enquanto houver c[i] negativo
+        #pivotear i-ésima coluna de c e das restrições
+        pass
 
+    def __trataBiNegativo(self):
+        b = self.__pl.getB()
+        for i in range(self.__pl.numRestricoes()):
+            if b[i] <0:
+                self.__multiplicaLinhaPor(i+1,-1)
+
+    def __multiplicaLinhaPor(self,numLinhaTableaux, valor):
+        if numLinhaTableaux == 0:
+            self.__multiplicaPrimeiraLinhaPor(valor)
+        else:
+            self.__multiplicaLinhaRestoTableauxPor(numLinhaTableaux, valor)
+    
+    def __multiplicaPrimeiraLinhaPor(self,valor):
+        pass
+
+    def __multiplicaLinhaRestoTableauxPor(self,numLinha, valor):
         pass
 
     def getSolucaoViavel(self):
