@@ -25,13 +25,12 @@ class Simplex():
         tableaux_aux = self.__geraTableauxPLAuxiliarDaPL(self.__pl)
         if tableaux_aux.getValorOtimo() == 0:
             print("É VIÁVEL")
-
-            self.colocaPLEmFPI(self.__pl)
+            plEmFPI = self.__colocaPLEmFPI(self.__pl)
             print("PL ORIGINAL EM FPI")
-            self.__pl.print()
+            plEmFPI.print()
 
             #gerar Tableaux Resolvido
-            tableaux_pl = self.__gerarTableauxResolvido(self.__pl)
+            tableaux_pl = self.__gerarTableauxResolvido(plEmFPI)
 
             #confere estado do tableaux resolvido
             if tableaux_pl.isOtima():
@@ -64,32 +63,33 @@ class Simplex():
     def __geraPLAuxiliar(self,pl):
         print("GERANDO PL AUXILIAR")
         #Criar nova PL Auxiliar com base na original
-        cAux = np.zeros(pl.c.shape[0])
-        bAux = pl.b.copy()
-        restricoesAux = pl.restricoes.copy()
+        plAux = pl.copia()
+        plAux.setC(np.zeros(plAux.numVariaveisC()))
 
         #Adicionar matriz de variáveis de folga nas restrições
-        variaveisAux = self.__geraMatrizIdentidade(restricoesAux.shape[0])
-        restricoesAux = np.hstack((restricoesAux,variaveisAux))
+        variaveisAux = self.__geraMatrizIdentidade(plAux.numRestricoes())
+        plAux.setRestricoes(np.hstack((plAux.getRestricoes(),variaveisAux)))
 
         #zerar o vetor C e adicionar 1's
-        vetorUns = np.ones(restricoesAux.shape[0])
-        cAux = np.concatenate((cAux,vetorUns), axis=None)
+        vetorUns = np.full(abs(plAux.getDiferencaNumVariaveisCERestricoes()),-1)
+        plAux.setC(np.concatenate((plAux.getC(),vetorUns), axis=None))
 
         #retorna PL Auxiliar
-        return PL(cAux, bAux, restricoesAux)
+        return plAux
 
-    def colocaPLEmFPI(self, pl):
+    def __colocaPLEmFPI(self, pl):
         print("COLOCANDO EM FPI")
-        #Completa a pl original com variáveis de folga
+        plCopia = pl.copia()
+
         #Adicionar matriz de variáveis de folga nas restrições
-        variaveisAux = self.__geraMatrizIdentidade(pl.numRestricoes())
-        pl.setRestricoes(np.hstack((pl.getRestricoes(),variaveisAux)))
+        variaveisAux = self.__geraMatrizIdentidade(plCopia.numRestricoes())
+        plCopia.setRestricoes(np.hstack((plCopia.getRestricoes(),variaveisAux)))
 
         #completar o vetor C com 0's
-        vetorZeros = np.zeros(pl.numVariaveisRestricoes()-pl.numVariaveisC())
-        pl.setC(np.concatenate((pl.getC(),vetorZeros), axis=None))
-
+        vetorZeros = np.zeros(plCopia.numVariaveisRestricoes()-plCopia.numVariaveisC())
+        plCopia.setC(np.concatenate((plCopia.getC(),vetorZeros), axis=None))
+        return plCopia
+    
     def imprimeTudo(self):
         self.__pl.print()
         print("Estado Final: {}".format(self.__estadoFinal))
