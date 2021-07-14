@@ -11,7 +11,8 @@ class Tableaux():
         self.__isOtimo = True
         self.__certificadoIlimitada = np.array(range(pl.numRestricoes()))
         self.__matrizTransformacoes = np.identity(pl.numRestricoes())
-        self.__pl = pl
+        self.__pl = pl.copia()
+        self.__pl.setC(self.__pl.getC()*-1)
 
     def imprimirTudo(self):
         print("Meu Tableaux")
@@ -26,6 +27,7 @@ class Tableaux():
         self.__pl.print()
 
     def resolver(self):
+
         pass
 
     def getSolucaoViavel(self):

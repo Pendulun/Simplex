@@ -23,6 +23,8 @@ class Simplex():
         print("PL RECEBIDA")
         self.imprimeTudo()
         tableaux_aux = self.__geraTableauxPLAuxiliarDaPL(self.__pl)
+        print("TABLEAUX FINAL DA PL AUXILIAR")
+        tableaux_aux.imprimirTudo()
         if tableaux_aux.getValorOtimo() == 0:
             print("É VIÁVEL")
             plEmFPI = self.__colocaPLEmFPI(self.__pl)
@@ -31,6 +33,8 @@ class Simplex():
 
             #gerar Tableaux Resolvido
             tableaux_pl = self.__gerarTableauxResolvido(plEmFPI)
+            print("TABLEAUX FINAL DA PL")
+            tableaux_pl.imprimirTudo()
 
             #confere estado do tableaux resolvido
             if tableaux_pl.isOtima():
