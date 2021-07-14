@@ -26,9 +26,13 @@ class Simplex():
         tableaux_aux = self.__geraTableauxPLAuxiliarDaPL(self.__pl)
         if tableaux_aux.getValorOtimo() == 0:
             print("É VIÁVEL")
+            self.__estadoFinal = self.OTIMA
+            #Isso aqui embaixo deve ser trocado pelo tableaux da resolução final
+            self.tableauxFinal = tableaux_aux
         else:
             print("NÃO É VIÁVEL")
             self.__estadoFinal = self.INVIAVEL
+            self.tableauxFinal = tableaux_aux
 
     def __geraTableauxPLAuxiliarDaPL(self, pl):
         print("GERA TABLEAUX DA PL AUXILIAR DA PL")
@@ -66,6 +70,15 @@ class Simplex():
     def imprimeTudo(self):
         self.__pl.print()
         print("Estado Final: {}".format(self.__estadoFinal))
+    
+    def imprimeResultado(self):
+        print("Estado Final: {}".format(self.__estadoFinal))
+        if self.__estadoFinal == self.INVIAVEL:
+            print("Certificado de Inviabilidade: {}".format(self.tableauxFinal.getCertificadoOtimalidade()))
+        elif self.__estadoFinal == self.OTIMA:
+            print("Valor ótimo: {}".format(self.tableauxFinal.getValorOtimo()))
+            print("Solução ótima: {}".format(self.tableauxFinal.getSolucaoViavel()))
+            print("Certificado Otimalidade: {}".format(self.tableauxFinal.getCertificadoOtimalidade()))
 
     def __trocaSinalLinhaSeBNaoPositivo(self):
         print("TROCA SINAL")

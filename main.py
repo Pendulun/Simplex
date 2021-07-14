@@ -26,6 +26,7 @@ def main():
         c,b,restricoes=leArquivo(arquivo)
         my_simplex = Simplex(c,b,restricoes)
         my_simplex.resolver()
+        my_simplex.imprimeResultado()
     except OSError:
         print("Não foi possível abrir arquivo no endereço {}".format(arquivo))
     
