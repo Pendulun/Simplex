@@ -9,39 +9,47 @@ class Simplex():
     sujeito a AX <= b e X>=0
     aplicando  o algoritmo Simplex
     """
+    OTIMA = "otima"
+    INVIAVEL = "inviavel"
+    ILIMITADA = "ilimitada"
+    tableauxFinal = ""
+    
+
     def __init__(self,c,b,restricoes):
-        self.pl = PL(c,b,restricoes)
+        self.__pl = PL(c,b,restricoes)
+        self.__estadoFinal = ""
 
     def resolver(self):
         print("PL RECEBIDA")
         self.imprimeTudo()
-        if(self.__verificaViabilidade()):
-            pass
+        #Se a PL auxiliar é inviável, salve as informações do estado e o certificado de inviabilidade
+        tableaux_aux = self.__geraTableauxPLAuxiliarDaPL(self.__pl)
+        if tableaux_aux.getValorOtimo() == 0:
+            print("É VIÁVEL")
         else:
-            pass
-        
+            print("NÃO É VIÁVEL")
+            self.__estadoFinal = self.INVIAVEL
 
-    def __verificaViabilidade(self):
-        plAux = self.__geraPLAuxiliar()
-        print("PL AUX:")
+    def __geraTableauxPLAuxiliarDaPL(self, pl):
+        print("GERA TABLEAUX DA PL AUXILIAR DA PL")
+        plAux = self.__geraPLAuxiliar(pl)
+        print("PL AUX GERADA:")
         plAux.print()
-        my_tableaux = Tableaux(plAux)
-        my_tableaux.resolver()
-        my_tableaux.imprimirTudo()
-        if(my_tableaux.getValorOtimo() < 0):
-            return False
-        elif(my_tableaux.getValorOtimo() > 0):
-            print("Algo deu errado! Valor ótimo da PL Auxiliar é maior que 0!")
-            return False
-        else:
-            return True
+        my_tableaux = self.__gerarTableauxResolvido(plAux)
+        return my_tableaux
 
-    def __geraPLAuxiliar(self):
-        print("Gerando PL Auxiliar")
+    def __gerarTableauxResolvido(self, pl):
+        print("GERANDO TABLEAUX RESOLVIDO")
+        my_tableaux = Tableaux(pl)
+        my_tableaux.resolver()
+        return my_tableaux
+
+    def __geraPLAuxiliar(self,pl):
+        print("GERANDO PL AUXILIAR")
         #Criar nova PL Auxiliar com base na original
-        cAux = np.zeros(self.pl.c.shape[0])
-        bAux = self.pl.b.copy()
-        restricoesAux = self.pl.restricoes.copy()
+        cAux = np.zeros(pl.c.shape[0])
+        bAux = pl.b.copy()
+        restricoesAux = pl.restricoes.copy()
 
         #Adicionar matriz de variáveis de folga nas restrições
         print(restricoesAux.shape[0])
@@ -56,7 +64,8 @@ class Simplex():
         return PL(cAux, bAux, restricoesAux)
 
     def imprimeTudo(self):
-        self.pl.print()
+        self.__pl.print()
+        print("Estado Final: {}".format(self.__estadoFinal))
 
     def __trocaSinalLinhaSeBNaoPositivo(self):
         print("TROCA SINAL")
