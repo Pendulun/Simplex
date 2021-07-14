@@ -32,12 +32,9 @@ class Tableaux():
         if(self.__isViavel):
             return self.__solucaoViavel.copy()
     
-    def getCertificadoOtimo(self):
-        pass
-
     def getCertificadoOtimalidade(self):
-        if(not self.__isIlimitada):
-            return self.__certificadoOtimo
+        if self.__isOtimo:
+            return self.__certificadoOtimo.copy()
     
     def getValorOtimo(self):
         if(self.__isViavel):
