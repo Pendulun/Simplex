@@ -17,13 +17,13 @@ def leArquivo(arquivo="standard_input.txt"):
         b[i] = linha[-1]
         
     file.close()
-    return n,m,c,b,restricoes
+    return c,b,restricoes
 
 def main():
     arquivo = "testes/standard_input2.txt"
     
     try:
-        n,m,c,b,restricoes=leArquivo(arquivo)
+        c,b,restricoes=leArquivo(arquivo)
         my_simplex = Simplex(c,b,restricoes)
         my_simplex.resolver()
     except OSError:
