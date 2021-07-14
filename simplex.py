@@ -22,13 +22,26 @@ class Simplex():
     def resolver(self):
         print("PL RECEBIDA")
         self.imprimeTudo()
-        #Se a PL auxiliar é inviável, salve as informações do estado e o certificado de inviabilidade
         tableaux_aux = self.__geraTableauxPLAuxiliarDaPL(self.__pl)
         if tableaux_aux.getValorOtimo() == 0:
             print("É VIÁVEL")
-            self.__estadoFinal = self.OTIMA
-            #Isso aqui embaixo deve ser trocado pelo tableaux da resolução final
-            self.tableauxFinal = tableaux_aux
+
+            self.colocaPLEmFPI(self.__pl)
+            print("PL ORIGINAL EM FPI")
+            self.__pl.print()
+
+            #gerar Tableaux Resolvido
+            tableaux_pl = self.__gerarTableauxResolvido(self.__pl)
+
+            #confere estado do tableaux resolvido
+            if tableaux_pl.isOtima():
+                print("É ÓTIMA")
+                self.__estadoFinal = self.OTIMA
+            elif tableaux_pl.isIlimitada():
+                print("É ILIMITADA")
+                self.__estadoFinal = self.ILIMITADA
+
+            self.tableauxFinal = tableaux_pl
         else:
             print("NÃO É VIÁVEL")
             self.__estadoFinal = self.INVIAVEL
@@ -37,8 +50,8 @@ class Simplex():
     def __geraTableauxPLAuxiliarDaPL(self, pl):
         print("GERA TABLEAUX DA PL AUXILIAR DA PL")
         plAux = self.__geraPLAuxiliar(pl)
-        print("PL AUX GERADA:")
-        plAux.print()
+        #print("PL AUX GERADA:")
+        #plAux.print()
         my_tableaux = self.__gerarTableauxResolvido(plAux)
         return my_tableaux
 
@@ -56,7 +69,6 @@ class Simplex():
         restricoesAux = pl.restricoes.copy()
 
         #Adicionar matriz de variáveis de folga nas restrições
-        print(restricoesAux.shape[0])
         variaveisAux = self.__geraMatrizIdentidade(restricoesAux.shape[0])
         restricoesAux = np.hstack((restricoesAux,variaveisAux))
 
@@ -66,6 +78,17 @@ class Simplex():
 
         #retorna PL Auxiliar
         return PL(cAux, bAux, restricoesAux)
+
+    def colocaPLEmFPI(self, pl):
+        print("COLOCANDO EM FPI")
+        #Completa a pl original com variáveis de folga
+        #Adicionar matriz de variáveis de folga nas restrições
+        variaveisAux = self.__geraMatrizIdentidade(pl.numRestricoes())
+        pl.setRestricoes(np.hstack((pl.getRestricoes(),variaveisAux)))
+
+        #completar o vetor C com 0's
+        vetorZeros = np.zeros(pl.numVariaveisRestricoes()-pl.numVariaveisC())
+        pl.setC(np.concatenate((pl.getC(),vetorZeros), axis=None))
 
     def imprimeTudo(self):
         self.__pl.print()
