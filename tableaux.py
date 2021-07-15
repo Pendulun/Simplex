@@ -47,18 +47,10 @@ class Tableaux():
                 break
     
     def __existeBINegativo(self):
-        b = self.__pl.getB()
-        for i in range(self.__pl.numRestricoes()):
-            if b[i] <0:
-                return True
-        return False
+        return np.any(self.__pl.getB() < 0) 
     
     def __existeCINegativo(self):
-        c = self.__pl.getC()
-        for i in range(len(c)):
-            if c[i] < 0:
-                return True
-        return False
+        return np.any(self.__pl.getC() < 0)
 
     def __trataBiNegativo(self):
         for i in range(self.__pl.numRestricoes()):
