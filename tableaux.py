@@ -34,12 +34,12 @@ class Tableaux():
         #enquanto houver c[i] negativo ou b[i] negativo
         while True:
             pivoteou = False
-            if self.__existeBINegativo():
+            while self.__existeBINegativo():
                 self.__trataBiNegativo()
                 pivoteou = True
-            #if self.__existeCINegativo():
+            #while self.__existeCINegativo():
             #   pivoteou = True
-            #    pass
+            #   pass
             if not pivoteou:
                 self.__isOtimo = True
                 self.__isIlimitada = False
