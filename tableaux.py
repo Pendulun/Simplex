@@ -4,7 +4,7 @@ from maxPL import PL
 class Tableaux():
     def __init__(self,pl):
         self.__valorOtimo = 0
-        self.__certificadoOtimo = np.array(range(pl.numRestricoes()))
+        self.__certificadoOtimo = np.zeros(pl.numRestricoes())
         self.__solucaoViavel = np.array(range(pl.numVariaveisRestricoes()))
         self.__isViavel = True
         self.__isIlimitada = True
@@ -16,28 +16,33 @@ class Tableaux():
 
     def imprimirTudo(self):
         print("Meu Tableaux")
-        print("Valor Ótimo: {}".format(self.__valorOtimo))
-        print("Certificado Ótimo: {}".format(self.__certificadoOtimo))
-        print("Solução Viável: {}".format(self.__solucaoViavel))
         print("É Viável: {}".format(self.__isViavel))
         print("É Ilimitada: {}".format(self.__isIlimitada))
+        print("É Ótima: {}".format(self.__isOtimo))
+        self.imprimeApenasTableaux()
+        print("Solução Viável: {}".format(self.__solucaoViavel))
         print("Certificado Ilimitada: {}".format(self.__certificadoIlimitada))
-        print("Matriz Transformações:\n {}".format(self.__matrizTransformacoes))
-        print("PL:")
-        self.__pl.print()
 
+    def imprimeApenasTableaux(self):
+        print("{} | {} | {}".format(self.__certificadoOtimo, self.__pl.getC(), self.__valorOtimo))
+        for i in range(self.__pl.numRestricoes()):
+            print("{} | {} | {}".format(self.__matrizTransformacoes[i], self.__pl.getRestricoes()[i], self.__pl.getB()[i]))
+        
     def resolver(self):
         #trata qualquer b[i] negativo
+        print("TABLEAUX INICIAL:")
+        self.imprimeApenasTableaux()
         self.__trataBiNegativo()
         #enquanto houver c[i] negativo
         #pivotear i-ésima coluna de c e das restrições
         pass
 
     def __trataBiNegativo(self):
-        b = self.__pl.getB()
         for i in range(self.__pl.numRestricoes()):
-            if b[i] <0:
+            if self.__pl.getB()[i] <0:
+                print("Multiplicando linha {} do Tableaux".format(i))
                 self.__multiplicaLinhaPor(i+1,-1)
+                self.imprimeApenasTableaux()
 
     def __multiplicaLinhaPor(self,numLinhaTableaux, valor):
         if numLinhaTableaux == 0:
@@ -49,7 +54,9 @@ class Tableaux():
         pass
 
     def __multiplicaLinhaRestoTableauxPor(self,numLinha, valor):
-        pass
+        self.__matrizTransformacoes[numLinha-1] = self.__matrizTransformacoes[numLinha-1]*valor
+        self.__pl.attLinhaRestricoes(numLinha-1, self.__pl.getRestricoes()[numLinha-1]*valor)
+        self.__pl.attValorB(numLinha-1,self.__pl.getB()[numLinha-1]*valor)
 
     def getSolucaoViavel(self):
         if(self.__isViavel):
