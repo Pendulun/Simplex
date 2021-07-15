@@ -1,4 +1,5 @@
 import numpy as np
+from numpy.lib.index_tricks import IndexExpression
 from maxPL import PL
 
 class Tableaux():
@@ -31,34 +32,72 @@ class Tableaux():
     def resolver(self):
         print("TABLEAUX INICIAL:")
         self.imprimeApenasTableaux()
+
         #enquanto houver c[i] negativo ou b[i] negativo
         while True:
             pivoteou = False
-            while self.__existeBINegativo():
-                self.__trataBiNegativo()
-                pivoteou = True
-            #while self.__existeCINegativo():
-            #   pivoteou = True
-            #   pass
+
+            pivoteou = self.__verificarB()
+
+            """
+            if not pivoteou:
+                pivoteou = self.__verificarC()
+            else:
+                self.__verificarC()
+            """
+
+            #Não sei se isso está certo
             if not pivoteou:
                 self.__isOtimo = True
                 self.__isIlimitada = False
                 self.__isViavel = True
                 break
-    
-    def __existeBINegativo(self):
-        return np.any(self.__pl.getB() < 0) 
-    
-    def __existeCINegativo(self):
-        return np.any(self.__pl.getC() < 0)
 
-    def __trataBiNegativo(self):
+    def __verificarB(self):
+        pivoteou = False
+        while True:
+            indexBINegativo = self.__getIndexBINegativo()
+            if indexBINegativo < 0:
+                break
+            else:
+                print("INDEX B NEGATIVO: {}".format(indexBINegativo))
+                self.__trataBiNegativo(indexBINegativo)
+                pivoteou = True
+        return pivoteou
+    
+    def __getIndexBINegativo(self):
         for i in range(self.__pl.numRestricoes()):
             if self.__pl.getB()[i] <0:
-                print("Multiplicando linha {} do Tableaux".format(i))
-                self.__multiplicaLinhaPor(i+1,-1)
-                #pivotear elemento
-                self.imprimeApenasTableaux()
+                return i
+        return -1
+
+    def __trataBiNegativo(self, index):
+        self.__multiplicaLinhaPor(index+1,-1)
+        #pivotear elemento
+        self.imprimeApenasTableaux()
+    
+    def __verificarC(self):
+        pivoteou = False
+        while True:
+            indexCINegativo = self.__getIndexCINegativo()
+            if indexCINegativo < 0:
+                break
+            else:
+                print("INDEX C NEGATIVO: {}".format(indexCINegativo))
+                self.__trataCiNegativo(indexCINegativo)
+                pivoteou = True
+
+        return pivoteou
+    
+    def __getIndexCINegativo(self):
+        for i in range(self.__pl.numVariaveisC()):
+            if self.__pl.getC()[i] <0:
+                return i
+        return -1
+
+    def __trataCiNegativo(self,index):
+        #pivotear algum elemento
+        pass
 
     def __multiplicaLinhaPor(self,numLinhaTableaux, valor):
         if numLinhaTableaux == 0:
