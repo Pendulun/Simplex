@@ -1,8 +1,11 @@
 import numpy as np
+import math
 from numpy.lib.index_tricks import IndexExpression
 from maxPL import PL
 
 class Tableaux():
+    PRECISAO = 0.0001
+
     def __init__(self,pl):
         self.__valorOtimo = 0
         self.__certificadoOtimo = np.zeros(pl.numRestricoes())
@@ -66,8 +69,11 @@ class Tableaux():
         return pivoteou
     
     def __getIndexBINegativo(self):
+        b = self.__pl.getB()
         for i in range(self.__pl.numRestricoes()):
-            if self.__pl.getB()[i] <0:
+            if math.isclose(b[i], 0, abs_tol=self.PRECISAO):
+                self.__pl.attValorB(i, 0.0)
+            elif b[i] < 0:
                 return i
         return -1
 
@@ -90,8 +96,11 @@ class Tableaux():
         return pivoteou
     
     def __getIndexCINegativo(self):
+        c = self.__pl.getC()
         for i in range(self.__pl.numVariaveisC()):
-            if self.__pl.getC()[i] <0:
+            if math.isclose(c[i], 0, abs_tol=self.PRECISAO):
+                self.__pl.attValorC(self, i, 0.0)
+            elif c[i] < 0:
                 return i
         return -1
 

@@ -1,4 +1,5 @@
 import numpy as np
+import math
 from maxPL import PL
 from tableaux import Tableaux
 
@@ -13,6 +14,7 @@ class Simplex():
     INVIAVEL = "inviavel"
     ILIMITADA = "ilimitada"
     tableauxFinal = ""
+    PRECISAO = 0.0001
     
 
     def __init__(self,c,b,restricoes):
@@ -25,7 +27,7 @@ class Simplex():
         tableaux_aux = self.__geraTableauxPLAuxiliarDaPL(self.__pl)
         print("TABLEAUX FINAL DA PL AUXILIAR")
         tableaux_aux.imprimirTudo()
-        if tableaux_aux.getValorOtimo() == 0:
+        if math.isclose(tableaux_aux.getValorOtimo(),0,abs_tol=self.PRECISAO):
             print("É VIÁVEL")
             plEmFPI = self.__colocaPLEmFPI(self.__pl)
             print("PL ORIGINAL EM FPI")
@@ -106,13 +108,6 @@ class Simplex():
             print("Valor ótimo: {}".format(self.tableauxFinal.getValorOtimo()))
             print("Solução ótima: {}".format(self.tableauxFinal.getSolucaoViavel()))
             print("Certificado Otimalidade: {}".format(self.tableauxFinal.getCertificadoOtimalidade()))
-
-    def __trocaSinalLinhaSeBNaoPositivo(self):
-        print("TROCA SINAL")
-        for i in range(self.b.size):
-            if self.b[i]<0:
-                self.restricoes[i] = self.restricoes[i] * -1
-                self.b[i] = self.b[i] * -1
     
     def __geraMatrizIdentidade(self, tam):
         print("Gera Matriz Identidade")
