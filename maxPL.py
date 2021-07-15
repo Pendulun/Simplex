@@ -41,6 +41,9 @@ class PL():
     
     def setC(self, novoC):
         self.__c = novoC
+    
+    def attValorC(self, numLinha, valor):
+        self.__c[numLinha] = valor
 
     def getB(self):
         return self.__b.copy()
