@@ -29,19 +29,43 @@ class Tableaux():
             print("{} | {} | {}".format(self.__matrizTransformacoes[i], self.__pl.getRestricoes()[i], self.__pl.getB()[i]))
         
     def resolver(self):
-        #trata qualquer b[i] negativo
         print("TABLEAUX INICIAL:")
         self.imprimeApenasTableaux()
-        self.__trataBiNegativo()
-        #enquanto houver c[i] negativo
-        #pivotear i-ésima coluna de c e das restrições
-        pass
+        #enquanto houver c[i] negativo ou b[i] negativo
+        while True:
+            pivoteou = False
+            if self.__existeBINegativo():
+                self.__trataBiNegativo()
+                pivoteou = True
+            #if self.__existeCINegativo():
+            #   pivoteou = True
+            #    pass
+            if not pivoteou:
+                self.__isOtimo = True
+                self.__isIlimitada = False
+                self.__isViavel = True
+                break
+    
+    def __existeBINegativo(self):
+        b = self.__pl.getB()
+        for i in range(self.__pl.numRestricoes()):
+            if b[i] <0:
+                return True
+        return False
+    
+    def __existeCINegativo(self):
+        c = self.__pl.getC()
+        for i in range(len(c)):
+            if c[i] < 0:
+                return True
+        return False
 
     def __trataBiNegativo(self):
         for i in range(self.__pl.numRestricoes()):
             if self.__pl.getB()[i] <0:
                 print("Multiplicando linha {} do Tableaux".format(i))
                 self.__multiplicaLinhaPor(i+1,-1)
+                #pivotear elemento
                 self.imprimeApenasTableaux()
 
     def __multiplicaLinhaPor(self,numLinhaTableaux, valor):
