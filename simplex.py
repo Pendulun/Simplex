@@ -1,3 +1,4 @@
+from tableauxAux import TableauxAux
 import numpy as np
 import math
 from maxPL import PL
@@ -25,16 +26,22 @@ class Simplex():
     def resolver(self):
         print("PL RECEBIDA")
         self.imprimeTudo()
-        tableaux_aux = self.__geraTableauxPLAuxiliarDaPL(self.__pl)
+        
+        plEmFPI = self.__colocaPLEmFPI(self.__pl)
+
+        print("PL ORIGINAL EM FPI")
+        plEmFPI.print()
+
+        tableaux_aux = self._resolvePLAux(plEmFPI)
+        #tableaux_aux = self.__geraTableauxPLAuxiliarDaPL(plEmFPI)
 
         print("TABLEAUX FINAL DA PL AUXILIAR")
         tableaux_aux.print()
 
         if tableaux_aux.resultadoTornaPLOriginalViavel():
-            print("É VIÁVEL")
-            plEmFPI = self.__colocaPLEmFPI(self.__pl)
-            print("PL ORIGINAL EM FPI")
-            plEmFPI.print()
+            
+            #Alterar para resolver a PL gerada pela resolução da PLAux
+            #tableaux_pl = pegarParteImportanteTableauxAuxResolvido(tableaux_aux)
 
             #gerar Tableaux Resolvido
             tableaux_pl = self.__gerarTableauxResolvido(plEmFPI)
@@ -54,59 +61,7 @@ class Simplex():
             print("NÃO É VIÁVEL")
             self.__estadoFinal = self.INVIAVEL
             self.tableauxFinal = tableaux_aux
-
-    def __geraTableauxPLAuxiliarDaPL(self, pl):
-        print("GERA TABLEAUX DA PL AUXILIAR DA PL")
-        plAux = self.__geraPLAuxiliar(pl)
-        #print("PL AUX GERADA:")
-        #plAux.print() 
-        return self.__gerarTableauxAuxResolvido(plAux, pl.getC())
-
-    def __gerarTableauxAuxResolvido(self, pl, cOriginal):
-        print("GERANDO TABLEAUX RESOLVIDO")
-        my_tableaux = TableauxPLAuxSolver(pl, cOriginal)
-        my_tableaux.resolver()
-        return my_tableaux.getTableaux()
-
-    def __gerarTableauxResolvido(self, pl):
-        print("GERANDO TABLEAUX RESOLVIDO")
-        my_tableaux = TableauxSolver(pl)
-        my_tableaux.resolver()
-        return my_tableaux
-
-    def __geraPLAuxiliar(self,pl):
-        print("GERANDO PL AUXILIAR")
-        #Criar nova PL Auxiliar com base na original
-        plAux = pl.copia()
-        plAux.setC(np.zeros(plAux.numVariaveisC()))
-
-        #Trata B negativo
-        plAux = self.__trataBNegativoPL(plAux)
-
-        #Adicionar matriz de variáveis de folga nas restrições
-        variaveisAux = self.__geraMatrizIdentidade(plAux.numRestricoes())
-        plAux.setRestricoes(np.hstack((plAux.getRestricoes(),variaveisAux)))
-
-        #zerar o vetor C e adicionar 1's
-        vetorUns = np.full(abs(plAux.getDiferencaNumVariaveisCERestricoes()),-1)
-        plAux.setC(np.concatenate((plAux.getC(),vetorUns), axis=None))
-
-        #retorna PL Auxiliar
-        return plAux
-
-    def __trataBNegativoPL(self,plAux):
-        b = plAux.getB()
-        restricoes = plAux.getRestricoes()
-        for i in range(plAux.numRestricoes()):
-            if math.isclose(b[i], 0, abs_tol=self.PRECISAO):
-                #Define como 0.0, já que é perto mesmo
-                plAux.attValorB(i, 0.0)
-            elif b[i] < 0:
-                # Multiplica b[i] e restricoes[i] por -1
-                plAux.attValorB(i,b[i]*-1)
-                plAux.attLinhaRestricoes(i,restricoes[i]*-1)
-        return plAux 
-
+    
     def __colocaPLEmFPI(self, pl):
         print("COLOCANDO EM FPI")
         plCopia = pl.copia()
@@ -120,10 +75,46 @@ class Simplex():
         plCopia.setC(np.concatenate((plCopia.getC(),vetorZeros), axis=None))
         return plCopia
     
+    def __geraMatrizIdentidade(self, tam):
+        print("Gera Matriz Identidade")
+        return np.identity(tam)
+
+    def _resolvePLAux(self, pl):
+        #adiciona zeros e -1's das variáveis artificiais em C
+        plAux = self.__transformaCNaVersaoDaAuxiliar(pl)
+        print("PL APOS COLOCAR C NA FORMA DA PL AUXILIAR")
+        plAux.print()
+        print("")
+
+        #A plAux está sem tratar B negativo e sem A com colunas das var. Artificiais
+        #O solver já cria o TableauxAux
+        tableauxAuxSolver = TableauxPLAuxSolver(plAux, pl.getC())
+
+        #O resolver() faz os outros tratamentos e retorna a versao final do tableaux resolvido
+        return tableauxAuxSolver.resolver()
+
+    def __transformaCNaVersaoDaAuxiliar(self,pl):
+        print("GERANDO PL AUXILIAR")
+        #Criar nova PL Auxiliar com base na original
+        plAux = pl.copia()
+
+        #zerar o vetor C e adicionar 1's
+        plAux.setC(np.zeros(plAux.numVariaveisC()))
+        vetorMenosUns = np.full(plAux.numRestricoes(),-1)
+        plAux.addEmC(vetorMenosUns)
+
+        return plAux
+
+    def __gerarTableauxResolvido(self, pl):
+        print("GERANDO TABLEAUX RESOLVIDO")
+        my_tableaux = TableauxSolver(pl)
+        my_tableaux.resolver()
+        return my_tableaux
+
     def imprimeTudo(self):
         self.__pl.print()
         print("Estado Final: {}".format(self.__estadoFinal))
-    
+
     def imprimeResultado(self):
         print("Estado Final: {}".format(self.__estadoFinal))
         if self.__estadoFinal == self.INVIAVEL:
@@ -132,7 +123,3 @@ class Simplex():
             print("Valor ótimo: {}".format(self.tableauxFinal.getValorOtimo()))
             print("Solução ótima: {}".format(self.tableauxFinal.getSolucaoViavel()))
             print("Certificado Otimalidade: {}".format(self.tableauxFinal.getCertificadoOtimalidade()))
-    
-    def __geraMatrizIdentidade(self, tam):
-        print("Gera Matriz Identidade")
-        return np.identity(tam)
