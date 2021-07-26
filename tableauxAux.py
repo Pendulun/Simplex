@@ -8,7 +8,7 @@ class TableauxAux(Tableaux):
 
     def __init__(self, pl, cOriginal):
         super(TableauxAux, self).__init__(pl)
-        self.__cOriginalNegativado = cOriginal*-1
+        self._cOriginalNegativado = cOriginal*-1
     
     def resultadoTornaPLOriginalViavel(self):
         return math.isclose(self._valorOtimo , 0, abs_tol=self.PRECISAO)
