@@ -1,7 +1,8 @@
 import numpy as np
 import math
 from maxPL import PL
-from tableaux import Tableaux
+from tableauxSolver import TableauxSolver
+from tableauxPLAuxSolver import TableauxPLAuxSolver
 
 class Simplex():
     """
@@ -56,13 +57,18 @@ class Simplex():
         print("GERA TABLEAUX DA PL AUXILIAR DA PL")
         plAux = self.__geraPLAuxiliar(pl)
         #print("PL AUX GERADA:")
-        #plAux.print()
-        my_tableaux = self.__gerarTableauxResolvido(plAux)
+        #plAux.print() 
+        return self.__gerarTableauxAuxResolvido(plAux, pl.getC())
+
+    def __gerarTableauxAuxResolvido(self, pl, cOriginal):
+        print("GERANDO TABLEAUX RESOLVIDO")
+        my_tableaux = TableauxPLAuxSolver(pl, cOriginal)
+        my_tableaux.resolver()
         return my_tableaux
 
     def __gerarTableauxResolvido(self, pl):
         print("GERANDO TABLEAUX RESOLVIDO")
-        my_tableaux = Tableaux(pl)
+        my_tableaux = TableauxSolver(pl)
         my_tableaux.resolver()
         return my_tableaux
 
