@@ -72,6 +72,7 @@ class Tableaux():
         b = self.__pl.getB()
         for i in range(self.__pl.numRestricoes()):
             if math.isclose(b[i], 0, abs_tol=self.PRECISAO):
+                #Define como 0.0, já que é perto mesmo
                 self.__pl.attValorB(i, 0.0)
             elif b[i] < 0:
                 return i
@@ -99,7 +100,8 @@ class Tableaux():
         c = self.__pl.getC()
         for i in range(self.__pl.numVariaveisC()):
             if math.isclose(c[i], 0, abs_tol=self.PRECISAO):
-                self.__pl.attValorC(self, i, 0.0)
+                #Define como 0.0, já que é perto mesmo
+                self.__pl.attValorC(i, 0.0)
             elif c[i] < 0:
                 return i
         return -1

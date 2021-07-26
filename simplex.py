@@ -72,6 +72,9 @@ class Simplex():
         plAux = pl.copia()
         plAux.setC(np.zeros(plAux.numVariaveisC()))
 
+        #Trata B negativo
+        plAux = self.__trataBNegativoPL(plAux)
+
         #Adicionar matriz de variáveis de folga nas restrições
         variaveisAux = self.__geraMatrizIdentidade(plAux.numRestricoes())
         plAux.setRestricoes(np.hstack((plAux.getRestricoes(),variaveisAux)))
@@ -82,6 +85,19 @@ class Simplex():
 
         #retorna PL Auxiliar
         return plAux
+
+    def __trataBNegativoPL(self,plAux):
+        b = plAux.getB()
+        restricoes = plAux.getRestricoes()
+        for i in range(plAux.numRestricoes()):
+            if math.isclose(b[i], 0, abs_tol=self.PRECISAO):
+                #Define como 0.0, já que é perto mesmo
+                plAux.attValorB(i, 0.0)
+            elif b[i] < 0:
+                # Multiplica b[i] e restricoes[i] por -1
+                plAux.attValorB(i,b[i]*-1)
+                plAux.attLinhaRestricoes(i,restricoes[i]*-1)
+        return plAux 
 
     def __colocaPLEmFPI(self, pl):
         print("COLOCANDO EM FPI")
