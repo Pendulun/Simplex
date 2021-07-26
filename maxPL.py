@@ -50,3 +50,6 @@ class PL():
     
     def attLinhaRestricoes(self, numLinha, novaLinha):
         self.__restricoes[numLinha] = novaLinha
+    
+    def addEmC(self, vetor):
+        self.__c = np.concatenate((self.__c,vetor), axis=None)
