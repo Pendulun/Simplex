@@ -32,18 +32,12 @@ class PL():
     
     def setRestricoes(self,novasRestricoes):
         self.__restricoes = novasRestricoes
-    
-    def attLinhaRestricoes(self, numLinha, novaLinha):
-        self.__restricoes[numLinha] = novaLinha
 
     def getC(self):
         return self.__c.copy()
     
     def setC(self, novoC):
         self.__c = novoC
-    
-    def attValorC(self, numLinha, valor):
-        self.__c[numLinha] = valor
 
     def getB(self):
         return self.__b.copy()
@@ -53,3 +47,6 @@ class PL():
     
     def attValorB(self, numLinha, valor):
         self.__b[numLinha] = valor
+    
+    def attLinhaRestricoes(self, numLinha, novaLinha):
+        self.__restricoes[numLinha] = novaLinha
