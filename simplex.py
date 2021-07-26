@@ -15,7 +15,7 @@ class Simplex():
     INVIAVEL = "inviavel"
     ILIMITADA = "ilimitada"
     tableauxFinal = ""
-    PRECISAO = 0.0001
+    PRECISAO=0.0001
     
 
     def __init__(self,c,b,restricoes):
@@ -26,9 +26,11 @@ class Simplex():
         print("PL RECEBIDA")
         self.imprimeTudo()
         tableaux_aux = self.__geraTableauxPLAuxiliarDaPL(self.__pl)
+
         print("TABLEAUX FINAL DA PL AUXILIAR")
-        tableaux_aux.imprimirTudo()
-        if math.isclose(tableaux_aux.getValorOtimo(),0,abs_tol=self.PRECISAO):
+        tableaux_aux.print()
+
+        if tableaux_aux.resultadoTornaPLOriginalViavel():
             print("É VIÁVEL")
             plEmFPI = self.__colocaPLEmFPI(self.__pl)
             print("PL ORIGINAL EM FPI")
@@ -64,7 +66,7 @@ class Simplex():
         print("GERANDO TABLEAUX RESOLVIDO")
         my_tableaux = TableauxPLAuxSolver(pl, cOriginal)
         my_tableaux.resolver()
-        return my_tableaux
+        return my_tableaux.getTableaux()
 
     def __gerarTableauxResolvido(self, pl):
         print("GERANDO TABLEAUX RESOLVIDO")

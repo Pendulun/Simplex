@@ -20,18 +20,13 @@ class TableauxSolver():
         print("É Viável: {}".format(self.__isViavel))
         print("É Ilimitada: {}".format(self.__isIlimitada))
         print("É Ótima: {}".format(self.__isOtimo))
-        self.imprimeApenasTableaux()
+        self.__tableaux.print()
         print("Solução Viável: {}".format(self.__solucaoViavel))
         print("Certificado Ilimitada: {}".format(self.__certificadoIlimitada))
-
-    def imprimeApenasTableaux(self):
-        print("{} | {} | {}".format(self.__tableaux.getCertificadoOtimo(), self.__tableaux.getC(), self.__tableaux.getValorOtimo()))
-        for i in range(self.__tableaux.numRestricoes()):
-            print("{} | {} | {}".format(self.__tableaux.getMatrizTransformacoes()[i], self.__tableaux.getMatrizA()[i], self.__tableaux.getB()[i]))
         
     def resolver(self):
         print("TABLEAUX INICIAL:")
-        self.imprimeApenasTableaux()
+        self.__tableaux.print()
 
         #enquanto houver c[i] negativo ou b[i] negativo
         while True:
@@ -78,7 +73,7 @@ class TableauxSolver():
     def __trataBiNegativo(self, index):
         self.__multiplicaLinhaPor(index+1,-1)
         #pivotear elemento
-        self.imprimeApenasTableaux()
+        self.__tableaux.print()
     
     def __verificarC(self):
         pivoteou = False
@@ -150,3 +145,5 @@ class TableauxSolver():
         if self.__isOtimo:
             return self.__certificadoOtimo.copy()
     
+    def getTableaux(self):
+        return self.__tableaux

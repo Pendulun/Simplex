@@ -3,12 +3,17 @@ import numpy as np
 
 class Tableaux():
     def __init__(self, pl):
-        self.__valorOtimo = 0
+        self._valorOtimo = 0
         self.__certificadoOtimo = np.zeros(pl.numRestricoes())
         self.__matrizTransformacoes = np.identity(pl.numRestricoes())
         self.__cNegativo = pl.getC()*-1
         self.__matrizA = pl.getRestricoes()
         self.__vetorB = pl.getB()
+    
+    def print(self):
+        print("{} | {} | {}".format(self.__certificadoOtimo, self.__cNegativo, self._valorOtimo))
+        for i in range(self.numRestricoes()):
+            print("{} | {} | {}".format(self.__matrizTransformacoes[i], self.__matrizA[i], self.__vetorB[i]))
     
     def numRestricoes(self):
         return self.__matrizA.shape[0]
@@ -38,7 +43,7 @@ class Tableaux():
         return self.__certificadoOtimo.copy()
     
     def getValorOtimo(self):
-        return self.__valorOtimo
+        return self._valorOtimo
     
     def getMatrizTransformacoes(self):
         return self.__matrizTransformacoes.copy()
