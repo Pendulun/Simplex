@@ -75,7 +75,8 @@ class TableauxSolver():
         #pivotear elemento
         self._tableaux.print()
     
-    def _verificarC(self):
+    def _trataCNegativo(self):
+        print("TRATANDO CI'S NEGATIVOS")
         pivoteou = False
         while True:
             indexCINegativo = self._getIndexCINegativo()
