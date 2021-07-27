@@ -23,11 +23,20 @@ class Tableaux():
     def getB(self):
         return self._vetorB.copy()
     
+    def getValorB(self, index):
+        return self._vetorB[index]
+    
     def getC(self):
         return self._cNegativo.copy()
     
+    def getItemC(self, index):
+        return self._cNegativo[index]
+    
     def getMatrizA(self):
         return self._matrizA.copy()
+    
+    def getCopiaLinhaA(self, numLinha):
+        return self._matrizA[numLinha]
     
     def attValorB(self, numLinha, valor):
         self._vetorB[numLinha] = valor
@@ -50,6 +59,9 @@ class Tableaux():
     def getMatrizTransformacoes(self):
         return self._matrizTransformacoes.copy()
     
+    def getCopiaLinhaMTransf(self, numLinha):
+        return self._matrizTransformacoes[numLinha]
+    
     def attLinhaMatrizA(self, numLinha, novaLinha):
         self._matrizA[numLinha] = novaLinha
     
@@ -58,3 +70,12 @@ class Tableaux():
     
     def addMatrizA(self, submatriz):
         self._matrizA = np.hstack((self._matrizA, submatriz))
+    
+    def addNoCertificadoOtimo(self, linha):
+        self._certificadoOtimo += linha
+    
+    def addNoVetorC(self, linha):
+        self._cNegativo += linha
+    
+    def addNoValorOtimo(self, valor):
+        self._valorOtimo += valor
