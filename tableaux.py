@@ -79,3 +79,12 @@ class Tableaux():
     
     def addNoValorOtimo(self, valor):
         self._valorOtimo += valor
+    
+    def addNoVetorB(self, index, valor):
+        self._vetorB[index] += valor
+    
+    def addNaMatrizA(self, indexLinha, linha):
+        self._matrizA[indexLinha] += linha
+    
+    def addNaMatrizTransf(self, indexLinha, linha):
+        self._matrizTransformacoes[indexLinha] += linha

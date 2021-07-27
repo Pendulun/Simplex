@@ -63,20 +63,27 @@ class TableauxPLAuxSolver(TableauxSolver):
         numColDaBaseArt=0
         for i in range(indexPrimeiraColDeCVarArtificiais, self._tableaux.numVariaveisC()):
             #Já que já sei que no vetor i de A tem um elemento igual a 1
-            self._adicionaLinhaNaPrimeiraLinhaNumVezes(numColDaBaseArt, -1)
+            self._adicionaLinhaNaLinhaAlvoTableauxNumVezes(numColDaBaseArt, 0,  -1)
             print("ADICIONANDO LINHA {} DE A EM C".format(numColDaBaseArt))
             self._tableaux.print()
             numColDaBaseArt+=1
     
     #Talvez isso suba para a classe pai com um nome de pivoteamento
-    def _adicionaLinhaNaPrimeiraLinhaNumVezes(self, numLinha, numVezes):
-        linhaA = self._tableaux.getCopiaLinhaA(numLinha)
-        linhaMTransf = self._tableaux.getCopiaLinhaMTransf(numLinha)
-        valorB = self._tableaux.getValorB(numLinha)
+    def _adicionaLinhaNaLinhaAlvoTableauxNumVezes(self, numLinhaOrigem, numLinhaAlvo, numVezes):
+        if numLinhaAlvo != numLinhaOrigem:
+            linhaA = self._tableaux.getCopiaLinhaA(numLinhaOrigem)
+            linhaMTransf = self._tableaux.getCopiaLinhaMTransf(numLinhaOrigem)
+            valorB = self._tableaux.getValorB(numLinhaOrigem)
 
-        self._tableaux.addNoCertificadoOtimo(linhaMTransf*numVezes)
-        self._tableaux.addNoVetorC(linhaA*numVezes)
-        self._tableaux.addNoValorOtimo(valorB*numVezes)
+            if numLinhaAlvo == 0:
+                self._tableaux.addNoCertificadoOtimo(linhaMTransf*numVezes)
+                self._tableaux.addNoVetorC(linhaA*numVezes)
+                self._tableaux.addNoValorOtimo(valorB*numVezes)
+            else:
+                numLinhaCorrigidoParaRestoTableaux = numLinhaAlvo-1
+                self._tableaux.addNaMatrizTransf(numLinhaCorrigidoParaRestoTableaux, linhaMTransf*numVezes)
+                self._tableaux.addMatrizA(numLinhaCorrigidoParaRestoTableaux, linhaA*numVezes)
+                self._tableaux.addNoVetorB(numLinhaCorrigidoParaRestoTableaux, valorB*numVezes)
 
 
 
