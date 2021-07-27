@@ -118,8 +118,8 @@ class Simplex():
     def imprimeResultado(self):
         print("Estado Final: {}".format(self.__estadoFinal))
         if self.__estadoFinal == self.INVIAVEL:
-            print("Certificado de Inviabilidade: {}".format(self.tableauxFinal.getCertificadoOtimalidade()))
+            print("Certificado de Inviabilidade: {}".format(self.tableauxFinal.getCertificadoOtimo()))
         elif self.__estadoFinal == self.OTIMA:
             print("Valor ótimo: {}".format(self.tableauxFinal.getValorOtimo()))
             print("Solução ótima: {}".format(self.tableauxFinal.getSolucaoViavel()))
-            print("Certificado Otimalidade: {}".format(self.tableauxFinal.getCertificadoOtimalidade()))
+            print("Certificado Otimalidade: {}".format(self.tableauxFinal.getCertificadoOtimo()))
