@@ -15,8 +15,8 @@ class TableauxPLAuxSolver(TableauxSolver):
         return self._tableaux
 
     def resolver(self):
-        #Tratar B negativos
-        self._trataBNegativoPL()
+        #Tratar B negativos multiplicando-os por -1 sem fazer nenhum pivoteamento
+        self._verificarB()
 
         #Adicionar Variáveis artificiais em A
         self._adicionarVariaveisArtificiais()
@@ -32,21 +32,19 @@ class TableauxPLAuxSolver(TableauxSolver):
 
         #retorna o tableaux em sua forma final
         return self._tableaux
+    
+    def  _verificarB(self):
+         while True:
+            indexBINegativo = self._getIndexBINegativo()
+            if indexBINegativo < 0:
+                break
+            else:
+                print("INDEX B NEGATIVO: {}".format(indexBINegativo))
+                self._trataBiNegativo(indexBINegativo)
 
-    def _trataBNegativoPL(self):
-        print("TRATANDO B_i's negativos")
-        b = self._tableaux.getB()
-        restricoes = self._tableaux.getMatrizA()
-        tranformacoes = self._tableaux.getMatrizTransformacoes()
-        for i in range(self._tableaux.numRestricoes()):
-            if math.isclose(b[i], 0, abs_tol=self.PRECISAO):
-                #Define como 0.0, já que é perto mesmo
-                self._tableaux.attValorB(i, 0.0)
-            elif b[i] < 0:
-                # Multiplica b[i], restricoes[i] e tranformacoes[i] por -1
-                self._tableaux.attValorB(i,b[i]*-1)
-                self._tableaux.attLinhaA(i,restricoes[i]*-1)
-                self._tableaux.attLinhaMatrizTransformacoes(i,tranformacoes[i]*-1)
+    def _trataBiNegativo(self, index):
+        self._multiplicaLinhaPor(index+1,-1)
+        #Não pivoteia Nada
         self._tableaux.print()
     
     def _adicionarVariaveisArtificiais(self):
@@ -70,6 +68,7 @@ class TableauxPLAuxSolver(TableauxSolver):
             self._tableaux.print()
             numColDaBaseArt+=1
     
+    #Talvez isso suba para a classe pai com um nome de pivoteamento
     def _adicionaLinhaNaPrimeiraLinhaNumVezes(self, numLinha, numVezes):
         linhaA = self._tableaux.getCopiaLinhaA(numLinha)
         linhaMTransf = self._tableaux.getCopiaLinhaMTransf(numLinha)
