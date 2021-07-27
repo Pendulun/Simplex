@@ -21,7 +21,14 @@ class TableauxPLAuxSolver(TableauxSolver):
         #Adicionar Variáveis artificiais em A
         self._adicionarVariaveisArtificiais()
 
-        #resolve
+        #zerar todas as entradas em C relacionadas às variáveis artificiais
+        self._zerarVariaveisArtificiaisDeC()
+        print("TABLEAUX DEPOIS DE ZERAR EM C VAR ARTIFICIAIS")
+        self._tableaux.print()
+
+        #para todo C_i negativo, pivotear
+        #definido em super
+        self._trataCNegativo()
 
         #retorna o tableaux em sua forma final
         return self._tableaux
@@ -52,4 +59,25 @@ class TableauxPLAuxSolver(TableauxSolver):
         print("Gera Matriz Identidade")
         return np.identity(tam)
 
+    def _zerarVariaveisArtificiaisDeC(self):
+        indexPrimeiraColDeCVarArtificiais = self._tableaux.numVariaveisC() - self._tableaux.numRestricoes()
+
+        numColDaBaseArt=0
+        for i in range(indexPrimeiraColDeCVarArtificiais, self._tableaux.numVariaveisC()):
+            #Já que já sei que no vetor i de A tem um elemento igual a 1
+            self._adicionaLinhaNaPrimeiraLinhaNumVezes(numColDaBaseArt, -1)
+            print("ADICIONANDO LINHA {} DE A EM C".format(numColDaBaseArt))
+            self._tableaux.print()
+            numColDaBaseArt+=1
     
+    def _adicionaLinhaNaPrimeiraLinhaNumVezes(self, numLinha, numVezes):
+        linhaA = self._tableaux.getCopiaLinhaA(numLinha)
+        linhaMTransf = self._tableaux.getCopiaLinhaMTransf(numLinha)
+        valorB = self._tableaux.getValorB(numLinha)
+
+        self._tableaux.addNoCertificadoOtimo(linhaMTransf*numVezes)
+        self._tableaux.addNoVetorC(linhaA*numVezes)
+        self._tableaux.addNoValorOtimo(valorB*numVezes)
+
+
+
