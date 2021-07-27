@@ -42,9 +42,18 @@ class TableauxPLAuxSolver(TableauxSolver):
                 print("INDEX B NEGATIVO: {}".format(indexBINegativo))
                 self._trataBiNegativo(indexBINegativo)
 
+    def _getIndexBINegativo(self):
+        b = self._tableaux.getB()
+        for i in range(self._tableaux.numRestricoes()):
+            if math.isclose(b[i], 0, abs_tol=self.PRECISAO):
+                #Define como 0.0, já que é perto mesmo
+                self._tableaux.attValorB(i, 0.0)
+            elif b[i] < 0:
+                return i
+        return -1
+
     def _trataBiNegativo(self, index):
         self._multiplicaLinhaPor(index+1,-1)
-        #Não pivoteia Nada
         self._tableaux.print()
     
     def _adicionarVariaveisArtificiais(self):

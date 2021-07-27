@@ -32,13 +32,11 @@ class TableauxSolver():
         while True:
             pivoteou = False
 
-            pivoteou = self._verificarB()
+            #Não preciso verificar B negativo pois já foi feito no Tableaux Aux (?)
+
 
             """
-            if not pivoteou:
-                pivoteou = self.__verificarC()
-            else:
-                self.__verificarC()
+            pivoteou = self.__verificarC()
             """
 
             #Não sei se isso está certo
@@ -47,33 +45,6 @@ class TableauxSolver():
                 self._isIlimitada = False
                 self._isViavel = True
                 break
-
-    def _verificarB(self):
-        pivoteou = False
-        while True:
-            indexBINegativo = self._getIndexBINegativo()
-            if indexBINegativo < 0:
-                break
-            else:
-                print("INDEX B NEGATIVO: {}".format(indexBINegativo))
-                self._trataBiNegativo(indexBINegativo)
-                pivoteou = True
-        return pivoteou
-    
-    def _getIndexBINegativo(self):
-        b = self._tableaux.getB()
-        for i in range(self._tableaux.numRestricoes()):
-            if math.isclose(b[i], 0, abs_tol=self.PRECISAO):
-                #Define como 0.0, já que é perto mesmo
-                self._tableaux.attValorB(i, 0.0)
-            elif b[i] < 0:
-                return i
-        return -1
-
-    def _trataBiNegativo(self, index):
-        self._multiplicaLinhaPor(index+1,-1)
-        #pivotear elemento
-        self._tableaux.print()
     
     def _trataCNegativo(self):
         print("TRATANDO CI'S NEGATIVOS")
