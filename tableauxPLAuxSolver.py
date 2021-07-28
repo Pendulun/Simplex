@@ -80,6 +80,30 @@ class TableauxPLAuxSolver(TableauxSolver):
             print("ADICIONANDO LINHA {} DE A EM C".format(indexLinhaMatrizA))
             self._tableaux.print()
     
+    def _zerarColunaPeloElemento(self, indexColuna, indexLinha):
+        self._zeraColunaMatrizA(indexColuna, indexLinha)
+        self._zeraElementoVetorC(indexColuna, indexLinha)
+        self._zeraElementoVetorCOriginal(indexColuna, indexLinha)
+    
+    def _zeraElementoVetorCOriginal(self, indexColuna, indexLinha):
+        #Zerando elemento vetor c Original
+        valorElementoASerZerado = self._tableaux.getElementoCOriginal(indexColuna)
+        if math.isclose(valorElementoASerZerado, 0.0, abs_tol=self.PRECISAO):
+            self._tableaux.attValorCOriginal(indexColuna, 0)
+        else:
+            #Assumindo que o elemento sendo pivoteado tem valor igual a 1
+            valorAMultiplicarALinhaComElementoPivo = -1*valorElementoASerZerado
+            self._adicionaLinhaMatrizANoCOriginalNumVezes(indexLinha,valorAMultiplicarALinhaComElementoPivo)
+    
+    def _adicionaLinhaMatrizANoCOriginalNumVezes(self, indexLinhaMatrizAOrigem, numVezes):
+        linhaA = self._tableaux.getCopiaLinhaA(indexLinhaMatrizAOrigem)
+        linhaMTransf = self._tableaux.getCopiaLinhaMTransf(indexLinhaMatrizAOrigem)
+        valorB = self._tableaux.getValorB(indexLinhaMatrizAOrigem)
+        self._tableaux.addNoCertificadoOtimoOriginal(linhaMTransf*numVezes)
+        self._tableaux.addNoVetorCOriginal(linhaA*numVezes)
+        self._tableaux.addNoValorOtimoOriginal(valorB*numVezes) 
+
+    
     def get_tableaux_segunda_parte(self):
         print("TABLEAUX ATUAL A IR PARA A SEGUNDA PARTE")
         self._tableaux.print()
