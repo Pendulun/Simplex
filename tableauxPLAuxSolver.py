@@ -13,30 +13,22 @@ class TableauxPLAuxSolver(TableauxSolver):
         self.comBaseNaPl(pl)
         self._tableaux = TableauxAux()
         self._tableaux.setPLECOriginal(pl, cOriginal)
-    
-    def getTableaux(self):
-        return self._tableaux
 
     def resolver(self):
-        #Tratar B negativos multiplicando-os por -1 sem fazer nenhum pivoteamento
-        self._verificarB()
 
-        #Adicionar Variáveis artificiais em A
+        self._tratarBNegativo()
+
         self._adicionarVariaveisArtificiaisEmA()
 
-        #zerar todas as entradas em C relacionadas às variáveis artificiais
         self._zerarVariaveisArtificiaisDeC()
         print("TABLEAUX DEPOIS DE ZERAR EM C VAR ARTIFICIAIS")
         self._tableaux.print()
 
-        #para todo C_i negativo, pivotear
-        #definido em super
         self._trataCNegativo()
 
-        #retorna o tableaux em sua forma final
         return self._tableaux
     
-    def  _verificarB(self):
+    def  _tratarBNegativo(self):
          while True:
             indexBINegativo = self._getIndexBINegativo()
             if indexBINegativo < 0:
@@ -49,7 +41,6 @@ class TableauxPLAuxSolver(TableauxSolver):
         b = self._tableaux.getB()
         for i in range(self._tableaux.numRestricoes()):
             if math.isclose(b[i], 0, abs_tol=self.PRECISAO):
-                #Define como 0.0, já que é perto mesmo
                 self._tableaux.attValorB(i, 0.0)
             elif b[i] < 0:
                 return i
@@ -86,7 +77,6 @@ class TableauxPLAuxSolver(TableauxSolver):
         self._zeraElementoVetorCOriginal(indexColuna, indexLinha)
     
     def _zeraElementoVetorCOriginal(self, indexColuna, indexLinha):
-        #Zerando elemento vetor c Original
         valorElementoASerZerado = self._tableaux.getElementoCOriginal(indexColuna)
         if math.isclose(valorElementoASerZerado, 0.0, abs_tol=self.PRECISAO):
             self._tableaux.attValorCOriginal(indexColuna, 0)
@@ -109,7 +99,7 @@ class TableauxPLAuxSolver(TableauxSolver):
         self._tableaux.print()
         tableaux_segunda_parte_simplex = Tableaux()
         tableaux_segunda_parte_simplex.copiaDoTableaux(self._tableaux)
-        #remove as colunas das variáveis artificiais de c e de A
+        
         novoC = self._tableaux.getCOriginalNegativado()
         novoA = self._tableaux.getMatrizA()
         print("C ORIGINAL SEM REMOVER ARTIFICIAIS")
@@ -125,3 +115,6 @@ class TableauxPLAuxSolver(TableauxSolver):
         tableaux_segunda_parte_simplex.setCertificadoOtimo(self._tableaux.getCertificadoOtimoDoCOriginal())
 
         return tableaux_segunda_parte_simplex
+    
+    def getTableaux(self):
+        return self._tableaux

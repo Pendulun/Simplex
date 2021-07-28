@@ -1,6 +1,5 @@
 from tableauxAux import TableauxAux
 import numpy as np
-import math
 from maxPL import PL
 from tableauxSolver import TableauxSolver
 from tableauxPLAuxSolver import TableauxPLAuxSolver
@@ -40,18 +39,15 @@ class Simplex():
 
         if tableaux_aux.resultadoTornaPLOriginalViavel():
             
-            #Alterar para resolver a PL gerada pela resolução da PLAux
             tableaux_parte_2 = tableauxAuxSolver.get_tableaux_segunda_parte()
             print("TABLEAUX SEGUNDA PARTE:")
             tableaux_parte_2.print()
 
-            #gerar Tableaux Resolvido
             tableaux_pl = self.__gerarTableauxResolvido(tableaux_parte_2)
 
             print("TABLEAUX FINAL DA PL")
             tableaux_pl.imprimirTudo()
 
-            #confere estado do tableaux resolvido
             if tableaux_pl.isOtima():
                 print("É ÓTIMA")
                 self.__estadoFinal = self.OTIMA
@@ -83,7 +79,6 @@ class Simplex():
         return np.identity(tam)
 
     def _resolvePLAux(self, pl):
-        #adiciona zeros e -1's das variáveis artificiais em C
         plAux = self.__transformaCNaVersaoDaAuxiliar(pl)
         print("PL APOS COLOCAR C NA FORMA DA PL AUXILIAR")
         plAux.print()
@@ -91,14 +86,10 @@ class Simplex():
 
         #A plAux está sem tratar B negativo e sem A com colunas das var. Artificiais
         #O solver já cria o TableauxAux
-        tableauxAuxSolver = TableauxPLAuxSolver(plAux, pl.getC())
-
-        #O resolver() faz os outros tratamentos e retorna a versao final do tableaux resolvido
-        return tableauxAuxSolver
+        return TableauxPLAuxSolver(plAux, pl.getC())
 
     def __transformaCNaVersaoDaAuxiliar(self,pl):
         print("GERANDO PL AUXILIAR")
-        #Criar nova PL Auxiliar com base na original
         plAux = pl.copia()
 
         #zerar o vetor C e adicionar 1's

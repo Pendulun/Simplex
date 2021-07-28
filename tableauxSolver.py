@@ -37,35 +37,35 @@ class TableauxSolver():
         print("TABLEAUX INICIAL:")
         self._tableaux.print()
 
-        #enquanto houver c[i] negativo ou b[i] negativo
-        tentouPivotear = False
+        #Não preciso verificar B negativo pois já foi feito no Tableaux Aux
+        self._trataCNegativo()
 
-        #Não preciso verificar B negativo pois já foi feito no Tableaux Aux (?)
-        tentouPivotear = self._trataCNegativo()
-
+        self._produzSolucaoViavel()
         #Não sei se isso está certo
         if self._isIlimitada:
             self._isOtimo = False
             self._isViavel = True
+            #self._getCertificadoIlimitada
         else:
             self._isOtimo = True
             self._isIlimitada = False
             self._isViavel = True
     
+    def _produzSolucaoViavel(self):
+        indexColunaInicialVarFolga = self._tableaux.numVariaveisC() - self._tableaux.numRestricoes()
+        pass
+        
     def _trataCNegativo(self):
         print("TRATANDO CI'S NEGATIVOS")
-        tentouPivotear = False
         while True:
             indexCINegativo = self._getIndexCINegativo()
             if indexCINegativo < 0:
                 break
             else:
                 print("INDEX C NEGATIVO: {}".format(indexCINegativo))
-                tentouPivotear = True
                 if(not self._trataCiNegativo(indexCINegativo)):
                     self._isIlimitada = True
                     break
-        return tentouPivotear
     
     def _getIndexCINegativo(self):
         c = self._tableaux.getC()
@@ -120,7 +120,6 @@ class TableauxSolver():
         self._zeraElementoVetorC(indexColuna, indexLinha)
 
     def _zeraColunaMatrizA(self, indexColuna, indexLinha):
-        #zerando coluna matriz A
         for i in range(self._tableaux.numRestricoes()):
             if i != indexLinha:
                 valorElementoASerZerado = self._tableaux.getElementoA(i,indexColuna)
@@ -133,7 +132,6 @@ class TableauxSolver():
                     self._adicionaLinhaMatrizANaLinhaAlvoTableauxNumVezes(indexLinha,linhaAtualRelativaAoTableauxInteiro,valorAMultiplicarALinhaComElementoPivo)
     
     def _zeraElementoVetorC(self, indexColuna, indexLinha):
-        #Zerando elemento vetor c
         valorElementoASerZerado = self._tableaux.getElementoC(indexColuna)
         if math.isclose(valorElementoASerZerado, 0.0, abs_tol=self.PRECISAO):
             self._tableaux.attValorC(indexColuna, 0)
