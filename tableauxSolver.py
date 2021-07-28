@@ -11,17 +11,17 @@ class TableauxSolver():
         self._tableaux = Tableaux()
         self._tableaux.setPL(pl)
         self._solucaoViavel = np.array(range(pl.numVariaveisRestricoes()))
-        self._isViavel = True
-        self._isIlimitada = True
-        self._isOtimo = True
+        self._isViavel = False
+        self._isIlimitada = False
+        self._isOtimo = False
         self._certificadoIlimitada = np.array(range(pl.numRestricoes()))
     
     def comBaseNoTableaux(self, tableaux):
         self._tableaux = tableaux
         self._solucaoViavel = np.array(range(self._tableaux.numRestricoes()))
-        self._isViavel = True
-        self._isIlimitada = True
-        self._isOtimo = True
+        self._isViavel = False
+        self._isIlimitada = False
+        self._isOtimo = False
         self._certificadoIlimitada = np.array(range(self._tableaux.numRestricoes()))
 
     def imprimirTudo(self):
@@ -38,34 +38,34 @@ class TableauxSolver():
         self._tableaux.print()
 
         #enquanto houver c[i] negativo ou b[i] negativo
-        while True:
-            pivoteou = False
+        tentouPivotear = False
 
-            #Não preciso verificar B negativo pois já foi feito no Tableaux Aux (?)
+        #Não preciso verificar B negativo pois já foi feito no Tableaux Aux (?)
+        tentouPivotear = self._trataCNegativo()
 
-            pivoteou = self._trataCNegativo()
-
-            #Não sei se isso está certo
-            if not pivoteou:
-                self._isOtimo = True
-                self._isIlimitada = False
-                self._isViavel = True
-                break
+        #Não sei se isso está certo
+        if self._isIlimitada:
+            self._isOtimo = False
+            self._isViavel = True
+        else:
+            self._isOtimo = True
+            self._isIlimitada = False
+            self._isViavel = True
     
     def _trataCNegativo(self):
         print("TRATANDO CI'S NEGATIVOS")
-        pivoteou = False
+        tentouPivotear = False
         while True:
             indexCINegativo = self._getIndexCINegativo()
             if indexCINegativo < 0:
                 break
             else:
                 print("INDEX C NEGATIVO: {}".format(indexCINegativo))
-                if(self._trataCiNegativo(indexCINegativo)):
-                    #Não foi possível pivotear ninguém. PL é Ilimitada
-                    pass
-                pivoteou = True
-        return pivoteou
+                tentouPivotear = True
+                if(not self._trataCiNegativo(indexCINegativo)):
+                    self._isIlimitada = True
+                    break
+        return tentouPivotear
     
     def _getIndexCINegativo(self):
         c = self._tableaux.getC()
