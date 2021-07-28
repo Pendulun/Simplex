@@ -10,19 +10,18 @@ class TableauxSolver():
     def comBaseNaPl(self, pl):
         self._tableaux = Tableaux()
         self._tableaux.setPL(pl)
-        self._solucaoViavel = np.array(range(pl.numVariaveisRestricoes()))
-        self._isViavel = False
-        self._isIlimitada = False
-        self._isOtimo = False
-        self._certificadoIlimitada = np.array(range(pl.numRestricoes()))
+        self._defineEstadoInicial()
     
     def comBaseNoTableaux(self, tableaux):
         self._tableaux = tableaux
-        self._solucaoViavel = np.array(range(self._tableaux.numRestricoes()))
+        self._defineEstadoInicial()
+    
+    def _defineEstadoInicial(self):
+        self._solucaoViavel = np.zeros(self._tableaux.numVariaveisC())
         self._isViavel = False
         self._isIlimitada = False
         self._isOtimo = False
-        self._certificadoIlimitada = np.array(range(self._tableaux.numRestricoes()))
+        self._certificadoIlimitada = np.zeros(self._tableaux.numRestricoes())
 
     def imprimirTudo(self):
         print("Meu Tableaux")
@@ -53,8 +52,35 @@ class TableauxSolver():
     
     def _produzSolucaoViavel(self):
         indexColunaInicialVarFolga = self._tableaux.numVariaveisC() - self._tableaux.numRestricoes()
-        pass
+        matrizCanonica = np.eye(self._tableaux.numRestricoes())
+        self._solucaoViavel = np.zeros(self._tableaux.numVariaveisC()-self._tableaux.numRestricoes())
+        for i in range(indexColunaInicialVarFolga):
+            if self._colunaEstaNaBase(i, matrizCanonica):
+                indexElementoUm = self._getIndexElementoUm(self._tableaux._matrizA[:,i])
+                self._solucaoViavel[i] = self._tableaux.getValorB(indexElementoUm)
+    
+    def _getIndexElementoUm(self, vetor):
+        for i in range(vetor.shape[0]):
+            if math.isclose(vetor[i], 1, abs_tol=self.PRECISAO):
+                return i
+        return -1
+    
+    def _colunaEstaNaBase(self, indexColuna, matrizCanonica):
+        if math.isclose(self._tableaux.getElementoC(indexColuna), 0, abs_tol=self.PRECISAO):
+            return self._seColunaDeACanonico(indexColuna, matrizCanonica)
+        else:
+            return False 
+
+    def _seColunaDeACanonico(self, indexColuna, matrizCanonica):
+        coluna = self._tableaux._matrizA[:,indexColuna]
+
+        for i in range(matrizCanonica.shape[0]):
+            comparison = coluna == matrizCanonica[:,i]
+            if comparison.all():
+                return True
+        return False
         
+
     def _trataCNegativo(self):
         print("TRATANDO CI'S NEGATIVOS")
         while True:
