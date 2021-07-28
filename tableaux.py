@@ -11,9 +11,15 @@ class Tableaux():
     _vetorB = ""
            
     def print(self):
+        self._imprimeLinhaC()
+        self._imprimeLinhasMatrizTranfAB()
+
+    def _imprimeLinhaC(self):
         primeiraLinha = "{} | {} | {}".format(self._certificadoOtimo, self._cNegativo, self._valorOtimo)
         print(primeiraLinha)
         print("-"*len(primeiraLinha))
+    
+    def _imprimeLinhasMatrizTranfAB(self):
         for i in range(self.numRestricoes()):
             print("{} | {} | {}".format(self._matrizTransformacoes[i], self._matrizA[i], self._vetorB[i]))
     

@@ -26,6 +26,18 @@ class TableauxAux(Tableaux):
         self._valorOtimoDoCOriginal = 0
         self._certificadoOtimoDoCOriginal = np.zeros(tableaux.numRestricoes())
     
+    def print(self):
+        self._imprimeLinhaC()
+        self._imprimeLinhasMatrizTranfAB()
+        self._imprimeLinhaCOriginal()
+
+    def _imprimeLinhaCOriginal(self):
+        print("C ORIGINAL:")
+        primeiraLinha = "{} | {} | {}".format(self._certificadoOtimoDoCOriginal,
+         self._cOriginalNegativado, self._valorOtimoDoCOriginal)
+        print(primeiraLinha)
+        print("-"*len(primeiraLinha))
+    
     def resultadoTornaPLOriginalViavel(self):
         return math.isclose(self._valorOtimo , 0, abs_tol=self.PRECISAO)
     
@@ -37,3 +49,18 @@ class TableauxAux(Tableaux):
     
     def getCertificadoOtimoDoCOriginal(self):
         return self._certificadoOtimoDoCOriginal.copy()
+    
+    def getElementoCOriginal(self, index):
+        return self._cOriginalNegativado[index]
+    
+    def attValorCOriginal(self, index, valor):
+        self._cOriginalNegativado[index] = valor
+    
+    def addNoCertificadoOtimoOriginal(self, linha):
+        self._certificadoOtimoDoCOriginal += linha
+    
+    def addNoVetorCOriginal(self, linha):
+        self._cOriginalNegativado += linha
+    
+    def addNoValorOtimoOriginal(self, valor):
+        self._valorOtimoDoCOriginal += valor
