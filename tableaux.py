@@ -32,8 +32,14 @@ class Tableaux():
     def getItemC(self, index):
         return self._cNegativo[index]
     
+    def getElementoC(self, index):
+        return self._cNegativo[index]
+    
     def getMatrizA(self):
         return self._matrizA.copy()
+    
+    def getElementoA(self, linha, coluna):
+        return self._matrizA[linha][coluna]
     
     def getCopiaLinhaA(self, numLinha):
         return self._matrizA[numLinha]
@@ -44,11 +50,14 @@ class Tableaux():
     def attLinhaA(self, numLinha, novaLinha):
         self._matrizA[numLinha] = novaLinha
     
+    def attElementoA(self, linha, coluna, valor):
+        self._matrizA[linha][coluna] = valor
+    
     def numVariaveisC(self):
         return self._cNegativo.shape[0]
     
-    def attValorC(self, numLinha, valor):
-        self._cNegativo[numLinha] = valor
+    def attValorC(self, index, valor):
+        self._cNegativo[index] = valor
     
     def getCertificadoOtimo(self):
         return self._certificadoOtimo.copy()

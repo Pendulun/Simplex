@@ -19,7 +19,7 @@ class TableauxPLAuxSolver(TableauxSolver):
         self._verificarB()
 
         #Adicionar Variáveis artificiais em A
-        self._adicionarVariaveisArtificiais()
+        self._adicionarVariaveisArtificiaisEmA()
 
         #zerar todas as entradas em C relacionadas às variáveis artificiais
         self._zerarVariaveisArtificiaisDeC()
@@ -56,7 +56,7 @@ class TableauxPLAuxSolver(TableauxSolver):
         self._multiplicaLinhaPor(index+1,-1)
         self._tableaux.print()
     
-    def _adicionarVariaveisArtificiais(self):
+    def _adicionarVariaveisArtificiaisEmA(self):
         print("ADICIONANDO VARIAVEIS ARTIFICIAIS MATRIZ A")
         variaveisArt = self.__geraMatrizIdentidade(self._tableaux.numRestricoes())
         self._tableaux.addMatrizA(variaveisArt)
@@ -76,23 +76,3 @@ class TableauxPLAuxSolver(TableauxSolver):
             print("ADICIONANDO LINHA {} DE A EM C".format(numColDaBaseArt))
             self._tableaux.print()
             numColDaBaseArt+=1
-    
-    #Talvez isso suba para a classe pai com um nome de pivoteamento
-    def _adicionaLinhaNaLinhaAlvoTableauxNumVezes(self, numLinhaOrigem, numLinhaAlvo, numVezes):
-        if numLinhaAlvo != numLinhaOrigem:
-            linhaA = self._tableaux.getCopiaLinhaA(numLinhaOrigem)
-            linhaMTransf = self._tableaux.getCopiaLinhaMTransf(numLinhaOrigem)
-            valorB = self._tableaux.getValorB(numLinhaOrigem)
-
-            if numLinhaAlvo == 0:
-                self._tableaux.addNoCertificadoOtimo(linhaMTransf*numVezes)
-                self._tableaux.addNoVetorC(linhaA*numVezes)
-                self._tableaux.addNoValorOtimo(valorB*numVezes)
-            else:
-                numLinhaCorrigidoParaRestoTableaux = numLinhaAlvo-1
-                self._tableaux.addNaMatrizTransf(numLinhaCorrigidoParaRestoTableaux, linhaMTransf*numVezes)
-                self._tableaux.addMatrizA(numLinhaCorrigidoParaRestoTableaux, linhaA*numVezes)
-                self._tableaux.addNoVetorB(numLinhaCorrigidoParaRestoTableaux, valorB*numVezes)
-
-
-

@@ -55,9 +55,10 @@ class TableauxSolver():
                 break
             else:
                 print("INDEX C NEGATIVO: {}".format(indexCINegativo))
-                self._trataCiNegativo(indexCINegativo)
+                if(self._trataCiNegativo(indexCINegativo)):
+                    #Não foi possível pivotear ninguém. PL é Ilimitada
+                    pass
                 pivoteou = True
-
         return pivoteou
     
     def _getIndexCINegativo(self):
@@ -70,9 +71,81 @@ class TableauxSolver():
                 return i
         return -1
 
-    def _trataCiNegativo(self,index):
-        #pivotear algum elemento
-        pass
+    def _trataCiNegativo(self,indexElementoC):
+        indexElementoAPivotear = self._escolherElementoAPivotearNaColuna(indexElementoC)
+        if(indexElementoAPivotear == -1):
+            return False 
+        else:
+            self._pivotearElementoDeA(indexElementoC, indexElementoAPivotear)
+            return True
+    
+    def _escolherElementoAPivotearNaColuna(self,indexColuna):
+        print("ESCOLHENDO ELEMENTO A SER PIVOTEADO DA COLUNA {} da matriz A".format(indexColuna))
+        indexElementoASerPivoteado = -1
+        matrizA = self._tableaux.getMatrizA()
+        vetorB = self._tableaux.getB()
+        menorRazao = np.Infinity
+        for i in range(self._tableaux.numRestricoes()):
+            valorAtual = matrizA[i][indexColuna]
+            print("ELEMENTO matrizA{}{} = {}".format(i,indexColuna,valorAtual))
+            if(valorAtual>0):
+                razaoComB= (vetorB[i])/valorAtual
+                if(razaoComB < menorRazao):
+                    menorRazao = razaoComB
+                    indexElementoASerPivoteado=i
+        valorDoElemento = matrizA[indexElementoASerPivoteado][indexColuna]
+        print("ELEMENTO ESCOLHIDO: matrizA{}{} = {}".format(indexElementoASerPivoteado,indexColuna,valorDoElemento))
+        return indexElementoASerPivoteado
+    
+    def _pivotearElementoDeA(self, indexColuna, indexLinha):
+        if math.isclose(self._tableaux.getElementoA(indexLinha, indexColuna), 1, abs_tol=self.PRECISAO):
+            self._tableaux.attElementoA(indexLinha,indexColuna,1)
+        else:
+            self._transformarElementoEmUm(indexColuna, indexLinha)
+        self._zerarColunaPeloElemento(indexColuna, indexLinha)
+    
+    def _transformarElementoEmUm(self, indexColuna, indexLinha):
+        self._multiplicaLinhaPor(indexLinha+1, (1/self._tableaux.getElementoA(indexLinha, indexColuna)))
+
+    def _zerarColunaPeloElemento(self, indexColuna, indexLinha):
+        #zerando coluna matriz A
+        for i in range(self._tableaux.numRestricoes()):
+            if i != indexLinha:
+                valorElementoASerZerado = self._tableaux.getElementoA(i,indexColuna)
+                if math.isclose(valorElementoASerZerado, 0.0, abs_tol=self.PRECISAO):
+                    self._tableaux.attElementoA(i, indexColuna, 0)
+                else:
+                    #Assumindo que o elemento sendo pivoteado tem valor igual a 1
+                    valorAMultiplicarALinhaComElementoPivo = -1*valorElementoASerZerado
+                    linhaAtualRelativaAoTableauxInteiro = i+1
+                    self._adicionaLinhaNaLinhaAlvoTableauxNumVezes(indexLinha,linhaAtualRelativaAoTableauxInteiro,valorAMultiplicarALinhaComElementoPivo)
+
+        #Zerando elemento vetor c
+        valorElementoASerZerado = self._tableaux.getElementoC(indexColuna)
+        if math.isclose(valorElementoASerZerado, 0.0, abs_tol=self.PRECISAO):
+            self._tableaux.attValorC(indexColuna, 0)
+        else:
+            #Assumindo que o elemento sendo pivoteado tem valor igual a 1
+            valorAMultiplicarALinhaComElementoPivo = -1*valorElementoASerZerado
+            linhaAtualRelativaAoTableauxInteiro = 0
+            self._adicionaLinhaNaLinhaAlvoTableauxNumVezes(indexLinha,linhaAtualRelativaAoTableauxInteiro,valorAMultiplicarALinhaComElementoPivo)
+    
+    #Talvez isso suba para a classe pai na parte de pivoteamento
+    def _adicionaLinhaNaLinhaAlvoTableauxNumVezes(self, numLinhaOrigem, numLinhaAlvo, numVezes):
+        if numLinhaAlvo != numLinhaOrigem:
+            linhaA = self._tableaux.getCopiaLinhaA(numLinhaOrigem)
+            linhaMTransf = self._tableaux.getCopiaLinhaMTransf(numLinhaOrigem)
+            valorB = self._tableaux.getValorB(numLinhaOrigem)
+
+            if numLinhaAlvo == 0:
+                self._tableaux.addNoCertificadoOtimo(linhaMTransf*numVezes)
+                self._tableaux.addNoVetorC(linhaA*numVezes)
+                self._tableaux.addNoValorOtimo(valorB*numVezes)
+            else:
+                numLinhaCorrigidoParaRestoTableaux = numLinhaAlvo-1
+                self._tableaux.addNaMatrizTransf(numLinhaCorrigidoParaRestoTableaux, linhaMTransf*numVezes)
+                self._tableaux.addMatrizA(numLinhaCorrigidoParaRestoTableaux, linhaA*numVezes)
+                self._tableaux.addNoVetorB(numLinhaCorrigidoParaRestoTableaux, valorB*numVezes)
 
     def _multiplicaLinhaPor(self,numLinhaTableaux, valor):
         if numLinhaTableaux == 0:
