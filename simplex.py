@@ -32,8 +32,8 @@ class Simplex():
         print("PL ORIGINAL EM FPI")
         plEmFPI.print()
 
-        tableaux_aux = self._resolvePLAux(plEmFPI)
-        #tableaux_aux = self.__geraTableauxPLAuxiliarDaPL(plEmFPI)
+        tableauxAuxSolver = self._resolvePLAux(plEmFPI)
+        tableaux_aux = tableauxAuxSolver.resolver()
 
         print("TABLEAUX FINAL DA PL AUXILIAR")
         tableaux_aux.print()
@@ -41,10 +41,13 @@ class Simplex():
         if tableaux_aux.resultadoTornaPLOriginalViavel():
             
             #Alterar para resolver a PL gerada pela resolução da PLAux
-            #tableaux_pl = pegarParteImportanteTableauxAuxResolvido(tableaux_aux)
+            tableaux_parte_2 = tableauxAuxSolver.get_tableaux_segunda_parte()
+            print("TABLEAUX SEGUNDA PARTE:")
+            tableaux_parte_2.print()
 
             #gerar Tableaux Resolvido
-            tableaux_pl = self.__gerarTableauxResolvido(plEmFPI)
+            tableaux_pl = self.__gerarTableauxResolvido(tableaux_parte_2)
+
             print("TABLEAUX FINAL DA PL")
             tableaux_pl.imprimirTudo()
 
@@ -61,7 +64,7 @@ class Simplex():
             print("NÃO É VIÁVEL")
             self.__estadoFinal = self.INVIAVEL
             self.tableauxFinal = tableaux_aux
-    
+
     def __colocaPLEmFPI(self, pl):
         print("COLOCANDO EM FPI")
         plCopia = pl.copia()
@@ -91,7 +94,7 @@ class Simplex():
         tableauxAuxSolver = TableauxPLAuxSolver(plAux, pl.getC())
 
         #O resolver() faz os outros tratamentos e retorna a versao final do tableaux resolvido
-        return tableauxAuxSolver.resolver()
+        return tableauxAuxSolver
 
     def __transformaCNaVersaoDaAuxiliar(self,pl):
         print("GERANDO PL AUXILIAR")
@@ -105,9 +108,10 @@ class Simplex():
 
         return plAux
 
-    def __gerarTableauxResolvido(self, pl):
+    def __gerarTableauxResolvido(self, tableaux):
         print("GERANDO TABLEAUX RESOLVIDO")
-        my_tableaux = TableauxSolver(pl)
+        my_tableaux = TableauxSolver()
+        my_tableaux.comBaseNoTableaux(tableaux)
         my_tableaux.resolver()
         return my_tableaux
 
@@ -122,4 +126,4 @@ class Simplex():
         elif self.__estadoFinal == self.OTIMA:
             print("Valor ótimo: {}".format(self.tableauxFinal.getValorOtimo()))
             print("Solução ótima: {}".format(self.tableauxFinal.getSolucaoViavel()))
-            print("Certificado Otimalidade: {}".format(self.tableauxFinal.getCertificadoOtimo()))
+            print("Certificado Otimalidade: {}".format(self.tableauxFinal.getCertificadoOtima()))
