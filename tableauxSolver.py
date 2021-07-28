@@ -43,10 +43,7 @@ class TableauxSolver():
 
             #Não preciso verificar B negativo pois já foi feito no Tableaux Aux (?)
 
-
-            """
-            pivoteou = self.__verificarC()
-            """
+            pivoteou = self._trataCNegativo()
 
             #Não sei se isso está certo
             if not pivoteou:
