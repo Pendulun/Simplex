@@ -2,7 +2,22 @@ from maxPL import PL
 import numpy as np
 
 class Tableaux():
-    def __init__(self, pl):
+
+    _valorOtimo = 0
+    _certificadoOtimo = ""
+    _matrizTransformacoes = ""
+    _cNegativo = ""
+    _matrizA = ""
+    _vetorB = ""
+           
+    def print(self):
+        primeiraLinha = "{} | {} | {}".format(self._certificadoOtimo, self._cNegativo, self._valorOtimo)
+        print(primeiraLinha)
+        print("-"*len(primeiraLinha))
+        for i in range(self.numRestricoes()):
+            print("{} | {} | {}".format(self._matrizTransformacoes[i], self._matrizA[i], self._vetorB[i]))
+    
+    def setPL(self, pl):
         self._valorOtimo = 0
         self._certificadoOtimo = np.zeros(pl.numRestricoes())
         self._matrizTransformacoes = np.identity(pl.numRestricoes())
@@ -10,12 +25,13 @@ class Tableaux():
         self._matrizA = pl.getRestricoes()
         self._vetorB = pl.getB()
     
-    def print(self):
-        primeiraLinha = "{} | {} | {}".format(self._certificadoOtimo, self._cNegativo, self._valorOtimo)
-        print(primeiraLinha)
-        print("-"*len(primeiraLinha))
-        for i in range(self.numRestricoes()):
-            print("{} | {} | {}".format(self._matrizTransformacoes[i], self._matrizA[i], self._vetorB[i]))
+    def copiaDoTableaux(self,tableaux):
+        self._valorOtimo = tableaux.getValorOtimo()
+        self._certificadoOtimo = tableaux.getCertificadoOtimo()
+        self._matrizTransformacoes = tableaux.getMatrizTransformacoes()
+        self._cNegativo = tableaux.getC()
+        self._matrizA = tableaux.getMatrizA()
+        self._vetorB = tableaux.getB()
     
     def numRestricoes(self):
         return self._matrizA.shape[0]
@@ -29,6 +45,9 @@ class Tableaux():
     def getC(self):
         return self._cNegativo.copy()
     
+    def setC(self, novoC):
+        self._cNegativo = novoC
+    
     def getItemC(self, index):
         return self._cNegativo[index]
     
@@ -37,6 +56,9 @@ class Tableaux():
     
     def getMatrizA(self):
         return self._matrizA.copy()
+    
+    def setMatrizA(self, novaMatrizA):
+        self._matrizA = novaMatrizA
     
     def getElementoA(self, linha, coluna):
         return self._matrizA[linha][coluna]
@@ -62,8 +84,14 @@ class Tableaux():
     def getCertificadoOtimo(self):
         return self._certificadoOtimo.copy()
     
+    def setCertificadoOtimo(self, novoCertificado):
+        self._certificadoOtimo = novoCertificado
+    
     def getValorOtimo(self):
         return self._valorOtimo
+    
+    def setValorOtimo(self, novoValorOtimo):
+        self._valorOtimo = novoValorOtimo
     
     def getMatrizTransformacoes(self):
         return self._matrizTransformacoes.copy()
