@@ -1,3 +1,4 @@
+from tableaux import Tableaux
 from tableauxSolver import TableauxSolver
 from tableauxAux import TableauxAux
 import math
@@ -8,8 +9,10 @@ class TableauxPLAuxSolver(TableauxSolver):
     PRECISAO = 0.0001
 
     def __init__(self, pl, cOriginal):
-        super().__init__(pl)
-        self._tableaux = TableauxAux(pl, cOriginal)
+        super().__init__()
+        self.comBaseNaPl(pl)
+        self._tableaux = TableauxAux()
+        self._tableaux.setPLECOriginal(pl, cOriginal)
     
     def getTableaux(self):
         return self._tableaux
@@ -68,11 +71,33 @@ class TableauxPLAuxSolver(TableauxSolver):
 
     def _zerarVariaveisArtificiaisDeC(self):
         indexPrimeiraColDeCVarArtificiais = self._tableaux.numVariaveisC() - self._tableaux.numRestricoes()
-
-        numColDaBaseArt=0
-        for i in range(indexPrimeiraColDeCVarArtificiais, self._tableaux.numVariaveisC()):
+        print("INDEX PRIMEIRA COLUNA ARITIFICIAL EM C {}".format(indexPrimeiraColDeCVarArtificiais))
+        print("NUMERO DE RESTRICOES: {}".format(self._tableaux.numRestricoes()))
+        #Para cada linha de A, somar no vetor C
+        for indexLinhaMatrizA in range(self._tableaux.numRestricoes()):
             #Já que já sei que no vetor i de A tem um elemento igual a 1
-            self._adicionaLinhaNaLinhaAlvoTableauxNumVezes(numColDaBaseArt, 0,  -1)
-            print("ADICIONANDO LINHA {} DE A EM C".format(numColDaBaseArt))
+            self._adicionaLinhaMatrizANaLinhaAlvoTableauxNumVezes(indexLinhaMatrizA, 0,  -1)
+            print("ADICIONANDO LINHA {} DE A EM C".format(indexLinhaMatrizA))
             self._tableaux.print()
-            numColDaBaseArt+=1
+    
+    def get_tableaux_segunda_parte(self):
+        print("TABLEAUX ATUAL A IR PARA A SEGUNDA PARTE")
+        self._tableaux.print()
+        tableaux_segunda_parte_simplex = Tableaux()
+        tableaux_segunda_parte_simplex.copiaDoTableaux(self._tableaux)
+        #remove as colunas das variáveis artificiais de c e de A
+        novoC = self._tableaux.getCOriginalNegativado()
+        novoA = self._tableaux.getMatrizA()
+        print("C ORIGINAL SEM REMOVER ARTIFICIAIS")
+        print("{}".format(novoC))
+        indexColunaInicialVarArtificiais = novoC.shape[0] - self._tableaux.numRestricoes()
+
+        novoC = np.delete(novoC, np.s_[indexColunaInicialVarArtificiais:], 0)
+        novoA = np.delete(novoA, np.s_[indexColunaInicialVarArtificiais:], 1)
+
+        tableaux_segunda_parte_simplex.setC(novoC)
+        tableaux_segunda_parte_simplex.setMatrizA(novoA)
+        tableaux_segunda_parte_simplex.setValorOtimo(self._tableaux.getValorOtimoDoCOriginal())
+        tableaux_segunda_parte_simplex.setCertificadoOtimo(self._tableaux.getCertificadoOtimoDoCOriginal())
+
+        return tableaux_segunda_parte_simplex
