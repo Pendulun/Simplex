@@ -7,13 +7,22 @@ from tableaux import Tableaux
 class TableauxSolver():
     PRECISAO = 0.0001
 
-    def __init__(self,pl):
-        self._tableaux = Tableaux(pl)
+    def comBaseNaPl(self, pl):
+        self._tableaux = Tableaux()
+        self._tableaux.setPL(pl)
         self._solucaoViavel = np.array(range(pl.numVariaveisRestricoes()))
         self._isViavel = True
         self._isIlimitada = True
         self._isOtimo = True
         self._certificadoIlimitada = np.array(range(pl.numRestricoes()))
+    
+    def comBaseNoTableaux(self, tableaux):
+        self._tableaux = tableaux
+        self._solucaoViavel = np.array(range(self._tableaux.numRestricoes()))
+        self._isViavel = True
+        self._isIlimitada = True
+        self._isOtimo = True
+        self._certificadoIlimitada = np.array(range(self._tableaux.numRestricoes()))
 
     def imprimirTudo(self):
         print("Meu Tableaux")
@@ -77,6 +86,8 @@ class TableauxSolver():
             return False 
         else:
             self._pivotearElementoDeA(indexElementoC, indexElementoAPivotear)
+            print("TABLEAUX DEPOIS DE PIVOTEAR O ELEMENTO:")
+            self._tableaux.print()
             return True
     
     def _escolherElementoAPivotearNaColuna(self,indexColuna):
@@ -118,7 +129,7 @@ class TableauxSolver():
                     #Assumindo que o elemento sendo pivoteado tem valor igual a 1
                     valorAMultiplicarALinhaComElementoPivo = -1*valorElementoASerZerado
                     linhaAtualRelativaAoTableauxInteiro = i+1
-                    self._adicionaLinhaNaLinhaAlvoTableauxNumVezes(indexLinha,linhaAtualRelativaAoTableauxInteiro,valorAMultiplicarALinhaComElementoPivo)
+                    self._adicionaLinhaMatrizANaLinhaAlvoTableauxNumVezes(indexLinha,linhaAtualRelativaAoTableauxInteiro,valorAMultiplicarALinhaComElementoPivo)
 
         #Zerando elemento vetor c
         valorElementoASerZerado = self._tableaux.getElementoC(indexColuna)
@@ -128,16 +139,17 @@ class TableauxSolver():
             #Assumindo que o elemento sendo pivoteado tem valor igual a 1
             valorAMultiplicarALinhaComElementoPivo = -1*valorElementoASerZerado
             linhaAtualRelativaAoTableauxInteiro = 0
-            self._adicionaLinhaNaLinhaAlvoTableauxNumVezes(indexLinha,linhaAtualRelativaAoTableauxInteiro,valorAMultiplicarALinhaComElementoPivo)
+            self._adicionaLinhaMatrizANaLinhaAlvoTableauxNumVezes(indexLinha,linhaAtualRelativaAoTableauxInteiro,valorAMultiplicarALinhaComElementoPivo)
     
     #Talvez isso suba para a classe pai na parte de pivoteamento
-    def _adicionaLinhaNaLinhaAlvoTableauxNumVezes(self, numLinhaOrigem, numLinhaAlvo, numVezes):
-        if numLinhaAlvo != numLinhaOrigem:
-            linhaA = self._tableaux.getCopiaLinhaA(numLinhaOrigem)
-            linhaMTransf = self._tableaux.getCopiaLinhaMTransf(numLinhaOrigem)
-            valorB = self._tableaux.getValorB(numLinhaOrigem)
+    def _adicionaLinhaMatrizANaLinhaAlvoTableauxNumVezes(self, indexLinhaMatrizAOrigem, numLinhaAlvo, numVezes):
+        if numLinhaAlvo != indexLinhaMatrizAOrigem+1:
+            linhaA = self._tableaux.getCopiaLinhaA(indexLinhaMatrizAOrigem)
+            linhaMTransf = self._tableaux.getCopiaLinhaMTransf(indexLinhaMatrizAOrigem)
+            valorB = self._tableaux.getValorB(indexLinhaMatrizAOrigem)
 
             if numLinhaAlvo == 0:
+                print("LINHA ALVO EH O C")
                 self._tableaux.addNoCertificadoOtimo(linhaMTransf*numVezes)
                 self._tableaux.addNoVetorC(linhaA*numVezes)
                 self._tableaux.addNoValorOtimo(valorB*numVezes)
@@ -188,7 +200,7 @@ class TableauxSolver():
     
     def getCertificadoOtima(self):
         if self._isOtimo:
-            return self._certificadoOtimo.copy()
+            return self._tableaux.getCertificadoOtimo()
     
     def getTableaux(self):
         return self._tableaux
