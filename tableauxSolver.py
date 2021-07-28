@@ -116,6 +116,10 @@ class TableauxSolver():
         self._multiplicaLinhaPor(indexLinha+1, (1/self._tableaux.getElementoA(indexLinha, indexColuna)))
 
     def _zerarColunaPeloElemento(self, indexColuna, indexLinha):
+        self._zeraColunaMatrizA(indexColuna, indexLinha)
+        self._zeraElementoVetorC(indexColuna, indexLinha)
+
+    def _zeraColunaMatrizA(self, indexColuna, indexLinha):
         #zerando coluna matriz A
         for i in range(self._tableaux.numRestricoes()):
             if i != indexLinha:
@@ -127,7 +131,8 @@ class TableauxSolver():
                     valorAMultiplicarALinhaComElementoPivo = -1*valorElementoASerZerado
                     linhaAtualRelativaAoTableauxInteiro = i+1
                     self._adicionaLinhaMatrizANaLinhaAlvoTableauxNumVezes(indexLinha,linhaAtualRelativaAoTableauxInteiro,valorAMultiplicarALinhaComElementoPivo)
-
+    
+    def _zeraElementoVetorC(self, indexColuna, indexLinha):
         #Zerando elemento vetor c
         valorElementoASerZerado = self._tableaux.getElementoC(indexColuna)
         if math.isclose(valorElementoASerZerado, 0.0, abs_tol=self.PRECISAO):
@@ -138,7 +143,6 @@ class TableauxSolver():
             linhaAtualRelativaAoTableauxInteiro = 0
             self._adicionaLinhaMatrizANaLinhaAlvoTableauxNumVezes(indexLinha,linhaAtualRelativaAoTableauxInteiro,valorAMultiplicarALinhaComElementoPivo)
     
-    #Talvez isso suba para a classe pai na parte de pivoteamento
     def _adicionaLinhaMatrizANaLinhaAlvoTableauxNumVezes(self, indexLinhaMatrizAOrigem, numLinhaAlvo, numVezes):
         if numLinhaAlvo != indexLinhaMatrizAOrigem+1:
             linhaA = self._tableaux.getCopiaLinhaA(indexLinhaMatrizAOrigem)
@@ -153,7 +157,7 @@ class TableauxSolver():
             else:
                 numLinhaCorrigidoParaRestoTableaux = numLinhaAlvo-1
                 self._tableaux.addNaMatrizTransf(numLinhaCorrigidoParaRestoTableaux, linhaMTransf*numVezes)
-                self._tableaux.addMatrizA(numLinhaCorrigidoParaRestoTableaux, linhaA*numVezes)
+                self._tableaux.addNaMatrizA(numLinhaCorrigidoParaRestoTableaux, linhaA*numVezes)
                 self._tableaux.addNoVetorB(numLinhaCorrigidoParaRestoTableaux, valorB*numVezes)
 
     def _multiplicaLinhaPor(self,numLinhaTableaux, valor):
