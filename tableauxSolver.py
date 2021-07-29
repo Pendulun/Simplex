@@ -51,11 +51,13 @@ class TableauxSolver():
             self._isViavel = True
 
     def _produzCertificadoIlimitada(self):
-        self._certificadoIlimitada[self.__indexColunaATodaNegativa]=1
+        if self.__indexColunaATodaNegativa < len(self._certificadoIlimitada):
+            self._certificadoIlimitada[self.__indexColunaATodaNegativa]=1
         colunaTodaNegativa = self._tableaux._matrizA[:,self.__indexColunaATodaNegativa]
         for i in range(self._tableaux.numRestricoes()):
-            indexColunaNaBase = self.__indexColunasBaseDict[i]
-            self._certificadoIlimitada[indexColunaNaBase] = -1*colunaTodaNegativa[i]
+            indexColunaNaBase = self.__indexColunasBaseDict.get(i,-1)
+            if(indexColunaNaBase != -1):
+                self._certificadoIlimitada[indexColunaNaBase] = -1*colunaTodaNegativa[i]
 
     def _produzSolucaoViavel(self):
         matrizCanonica = np.eye(self._tableaux.numRestricoes())

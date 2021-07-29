@@ -95,3 +95,6 @@ class Simplex():
             print("{}".format(self.tableauxFinal.getValorOtimo()))
             print("{}".format(self.tableauxFinal.getSolucaoViavel()))
             print("{}".format(self.tableauxFinal.getCertificadoOtima()))
+        elif self.__estadoFinal == self.ILIMITADA:
+            print("{}".format(self.tableauxFinal.getSolucaoViavel()))
+            print("{}".format(self.tableauxFinal.getCertificadoIlimitada()))
