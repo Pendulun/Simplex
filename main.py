@@ -19,7 +19,7 @@ def leEntrada():
 
 def main():
     
-    c,b,restricoes=leEntrada(arquivo)
+    c,b,restricoes=leEntrada()
     my_simplex = Simplex(c,b,restricoes)
     my_simplex.resolver()
     my_simplex.imprimeResultado()

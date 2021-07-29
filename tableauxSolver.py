@@ -35,8 +35,6 @@ class TableauxSolver():
         print("Certificado Ilimitada: {}".format(self._certificadoIlimitada))
         
     def resolver(self):
-        print("TABLEAUX INICIAL:")
-        self._tableaux.print()
 
         #Não preciso verificar B negativo pois já foi feito no Tableaux Aux
         self._trataCNegativo()
@@ -53,7 +51,6 @@ class TableauxSolver():
             self._isViavel = True
 
     def _produzCertificadoIlimitada(self):
-        #self._certificadoIlimitada = np.zeros(self._indexColunaInicialVarFolga)
         self._certificadoIlimitada[self.__indexColunaATodaNegativa]=1
         colunaTodaNegativa = self._tableaux._matrizA[:,self.__indexColunaATodaNegativa]
         for i in range(self._tableaux.numRestricoes()):
@@ -61,7 +58,6 @@ class TableauxSolver():
             self._certificadoIlimitada[indexColunaNaBase] = -1*colunaTodaNegativa[i]
 
     def _produzSolucaoViavel(self):
-       # self._indexColunaInicialVarFolga = self._tableaux.numVariaveisC() - self._tableaux.numRestricoes()
         matrizCanonica = np.eye(self._tableaux.numRestricoes())
         self._solucaoViavel = np.zeros(self._tableaux.numVariaveisC()-self._tableaux.numRestricoes())
         for i in range(self._indexColunaInicialVarFolga):
@@ -93,18 +89,14 @@ class TableauxSolver():
         
 
     def _trataCNegativo(self):
-        print("TRATANDO CI'S NEGATIVOS")
         while True:
             indexCINegativo = self._getIndexCINegativo()
             if indexCINegativo < 0:
                 break
             else:
-                print("INDEX C NEGATIVO: {}".format(indexCINegativo))
                 if(not self._trataCiNegativo(indexCINegativo)):
                     self._isIlimitada = True
                     self.__indexColunaATodaNegativa = indexCINegativo
-                    print("COLUNA TODA NEGATIVA:")
-                    print(self._tableaux._matrizA[:,self.__indexColunaATodaNegativa])
                     break
     
     def _getIndexCINegativo(self):
@@ -123,26 +115,20 @@ class TableauxSolver():
             return False 
         else:
             self._pivotearElementoDeA(indexElementoC, indexElementoAPivotear)
-            print("TABLEAUX DEPOIS DE PIVOTEAR O ELEMENTO:")
-            self._tableaux.print()
             return True
     
     def _escolherElementoAPivotearNaColuna(self,indexColuna):
-        print("ESCOLHENDO ELEMENTO A SER PIVOTEADO DA COLUNA {} da matriz A".format(indexColuna))
         indexElementoASerPivoteado = -1
         matrizA = self._tableaux.getMatrizA()
         vetorB = self._tableaux.getB()
         menorRazao = np.Infinity
         for i in range(self._tableaux.numRestricoes()):
             valorAtual = matrizA[i][indexColuna]
-            print("ELEMENTO matrizA{}{} = {}".format(i,indexColuna,valorAtual))
             if(valorAtual>0):
                 razaoComB= (vetorB[i])/valorAtual
                 if(razaoComB < menorRazao):
                     menorRazao = razaoComB
                     indexElementoASerPivoteado=i
-        valorDoElemento = matrizA[indexElementoASerPivoteado][indexColuna]
-        print("ELEMENTO ESCOLHIDO: matrizA{}{} = {}".format(indexElementoASerPivoteado,indexColuna,valorDoElemento))
         return indexElementoASerPivoteado
     
     def _pivotearElementoDeA(self, indexColuna, indexLinha):
@@ -188,7 +174,6 @@ class TableauxSolver():
             valorB = self._tableaux.getValorB(indexLinhaMatrizAOrigem)
 
             if numLinhaAlvo == 0:
-                print("LINHA ALVO EH O C")
                 self._tableaux.addNoCertificadoOtimo(linhaMTransf*numVezes)
                 self._tableaux.addNoVetorC(linhaA*numVezes)
                 self._tableaux.addNoValorOtimo(valorB*numVezes)

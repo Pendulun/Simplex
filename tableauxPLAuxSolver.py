@@ -21,8 +21,6 @@ class TableauxPLAuxSolver(TableauxSolver):
         self._adicionarVariaveisArtificiaisEmA()
 
         self._zerarVariaveisArtificiaisDeC()
-        print("TABLEAUX DEPOIS DE ZERAR EM C VAR ARTIFICIAIS")
-        self._tableaux.print()
 
         self._trataCNegativo()
 
@@ -34,7 +32,6 @@ class TableauxPLAuxSolver(TableauxSolver):
             if indexBINegativo < 0:
                 break
             else:
-                print("INDEX B NEGATIVO: {}".format(indexBINegativo))
                 self._trataBiNegativo(indexBINegativo)
 
     def _getIndexBINegativo(self):
@@ -48,28 +45,19 @@ class TableauxPLAuxSolver(TableauxSolver):
 
     def _trataBiNegativo(self, index):
         self._multiplicaLinhaPor(index+1,-1)
-        self._tableaux.print()
     
     def _adicionarVariaveisArtificiaisEmA(self):
-        print("ADICIONANDO VARIAVEIS ARTIFICIAIS MATRIZ A")
         variaveisArt = self.__geraMatrizIdentidade(self._tableaux.numRestricoes())
         self._tableaux.addMatrizA(variaveisArt)
-        self._tableaux.print()
     
     def __geraMatrizIdentidade(self, tam):
-        print("Gera Matriz Identidade")
         return np.identity(tam)
 
     def _zerarVariaveisArtificiaisDeC(self):
-        indexPrimeiraColDeCVarArtificiais = self._tableaux.numVariaveisC() - self._tableaux.numRestricoes()
-        print("INDEX PRIMEIRA COLUNA ARITIFICIAL EM C {}".format(indexPrimeiraColDeCVarArtificiais))
-        print("NUMERO DE RESTRICOES: {}".format(self._tableaux.numRestricoes()))
         #Para cada linha de A, somar no vetor C
         for indexLinhaMatrizA in range(self._tableaux.numRestricoes()):
             #Já que já sei que no vetor i de A tem um elemento igual a 1
             self._adicionaLinhaMatrizANaLinhaAlvoTableauxNumVezes(indexLinhaMatrizA, 0,  -1)
-            print("ADICIONANDO LINHA {} DE A EM C".format(indexLinhaMatrizA))
-            self._tableaux.print()
     
     def _zerarColunaPeloElemento(self, indexColuna, indexLinha):
         self._zeraColunaMatrizA(indexColuna, indexLinha)
@@ -95,15 +83,13 @@ class TableauxPLAuxSolver(TableauxSolver):
 
     
     def get_tableaux_segunda_parte(self):
-        print("TABLEAUX ATUAL A IR PARA A SEGUNDA PARTE")
-        self._tableaux.print()
+
         tableaux_segunda_parte_simplex = Tableaux()
         tableaux_segunda_parte_simplex.copiaDoTableaux(self._tableaux)
         
         novoC = self._tableaux.getCOriginalNegativado()
         novoA = self._tableaux.getMatrizA()
-        print("C ORIGINAL SEM REMOVER ARTIFICIAIS")
-        print("{}".format(novoC))
+
         indexColunaInicialVarArtificiais = novoC.shape[0] - self._tableaux.numRestricoes()
 
         novoC = np.delete(novoC, np.s_[indexColunaInicialVarArtificiais:], 0)
