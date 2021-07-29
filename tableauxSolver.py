@@ -21,7 +21,9 @@ class TableauxSolver():
         self._isViavel = False
         self._isIlimitada = False
         self._isOtimo = False
-        self._certificadoIlimitada = np.zeros(self._tableaux.numRestricoes())
+        self.__indexColunasBaseDict = {}
+        self._indexColunaInicialVarFolga = self._tableaux.numVariaveisC() - self._tableaux.numRestricoes()
+        self._certificadoIlimitada = np.zeros(self._indexColunaInicialVarFolga)
 
     def imprimirTudo(self):
         print("Meu Tableaux")
@@ -44,20 +46,29 @@ class TableauxSolver():
         if self._isIlimitada:
             self._isOtimo = False
             self._isViavel = True
-            #self._getCertificadoIlimitada
+            self._produzCertificadoIlimitada()
         else:
             self._isOtimo = True
             self._isIlimitada = False
             self._isViavel = True
-    
+
+    def _produzCertificadoIlimitada(self):
+        #self._certificadoIlimitada = np.zeros(self._indexColunaInicialVarFolga)
+        self._certificadoIlimitada[self.__indexColunaATodaNegativa]=1
+        colunaTodaNegativa = self._tableaux._matrizA[:,self.__indexColunaATodaNegativa]
+        for i in range(self._tableaux.numRestricoes()):
+            indexColunaNaBase = self.__indexColunasBaseDict[i]
+            self._certificadoIlimitada[indexColunaNaBase] = -1*colunaTodaNegativa[i]
+
     def _produzSolucaoViavel(self):
-        indexColunaInicialVarFolga = self._tableaux.numVariaveisC() - self._tableaux.numRestricoes()
+       # self._indexColunaInicialVarFolga = self._tableaux.numVariaveisC() - self._tableaux.numRestricoes()
         matrizCanonica = np.eye(self._tableaux.numRestricoes())
         self._solucaoViavel = np.zeros(self._tableaux.numVariaveisC()-self._tableaux.numRestricoes())
-        for i in range(indexColunaInicialVarFolga):
+        for i in range(self._indexColunaInicialVarFolga):
             if self._colunaEstaNaBase(i, matrizCanonica):
                 indexElementoUm = self._getIndexElementoUm(self._tableaux._matrizA[:,i])
                 self._solucaoViavel[i] = self._tableaux.getValorB(indexElementoUm)
+                self.__indexColunasBaseDict[indexElementoUm]=i
     
     def _getIndexElementoUm(self, vetor):
         for i in range(vetor.shape[0]):
@@ -91,6 +102,9 @@ class TableauxSolver():
                 print("INDEX C NEGATIVO: {}".format(indexCINegativo))
                 if(not self._trataCiNegativo(indexCINegativo)):
                     self._isIlimitada = True
+                    self.__indexColunaATodaNegativa = indexCINegativo
+                    print("COLUNA TODA NEGATIVA:")
+                    print(self._tableaux._matrizA[:,self.__indexColunaATodaNegativa])
                     break
     
     def _getIndexCINegativo(self):
