@@ -90,11 +90,18 @@ class Simplex():
     def imprimeResultado(self):
         print("{}".format(self.__estadoFinal))
         if self.__estadoFinal == self.INVIAVEL:
-            print("{}".format(self.tableauxFinal.getCertificadoOtimo()))
+            print("{}".format(self._stringVetor(self.tableauxFinal.getCertificadoOtimo())))
         elif self.__estadoFinal == self.OTIMA:
             print("{}".format(self.tableauxFinal.getValorOtimo()))
-            print("{}".format(self.tableauxFinal.getSolucaoViavel()))
-            print("{}".format(self.tableauxFinal.getCertificadoOtima()))
+            print(self._stringVetor(self.tableauxFinal.getSolucaoViavel()))
+            print(self._stringVetor(self.tableauxFinal.getCertificadoOtima()))
         elif self.__estadoFinal == self.ILIMITADA:
-            print("{}".format(self.tableauxFinal.getSolucaoViavel()))
-            print("{}".format(self.tableauxFinal.getCertificadoIlimitada()))
+            print("{}".format(self._stringVetor(self.tableauxFinal.getSolucaoViavel())))
+            print(self._stringVetor(self.tableauxFinal.getCertificadoIlimitada()))
+    
+    def _stringVetor(self, vetor):
+        saida = ""
+        saida +="{0:.7f}".format(vetor[0])
+        for i in range(1,vetor.shape[0]):
+            saida +=" {0:.7f}".format(vetor[i])
+        return saida
